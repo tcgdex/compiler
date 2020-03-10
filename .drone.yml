@@ -1,0 +1,39 @@
+kind: pipeline
+name: default
+type: docker
+
+steps:
+  - name: submodules
+    image: alpine/git
+    commands:
+    - git submodule update --init --recursive
+    - git submodule foreach git checkout master
+    - git submodule foreach git pull origin master
+
+  - name: prepare
+    image: node:alpine
+    commands:
+    - apk -q add yarn
+    - yarn
+    - yarn cards:compile
+
+  - name: compile
+    image: node:alpine
+    commands:
+    - apk -q add yarn
+    - yarn gen:all
+
+  - name: push
+    image: alpine/git
+    commands:
+    - cd dist
+    - git config --global user.email "$PUSH_EMAIL"
+    - git config --global user.name "$PUSH_NAME"
+    - git add .
+    - git commit -m "Updated API"
+    - git push -u origin master
+    environment:
+      PUSH_EMAIL:
+        from_secret: PUSH_EMAIL
+      PUSH_NAME:
+        from_secret: PUSH_NAME

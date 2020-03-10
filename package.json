@@ -1,0 +1,30 @@
+{
+	"name": "tcgdex-compiler",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "git@git.delta-wings.net:tcgdex/compiler.git",
+	"author": "Avior <florian.bouillon@delta-wings.net>",
+	"license": "MIT",
+	"private": false,
+	"scripts": {
+		"gen:all": "yarn gen:types && yarn gen:illustrators && yarn gen:hp && yarn gen:tags && yarn gen:retreat && yarn gen:categories && yarn gen:rarities && yarn gen:cards && yarn gen:expansions",
+		"gen:types": "ts-node web/types/generator.ts",
+		"gen:illustrators": "ts-node web/illustrators/generator.ts",
+		"gen:hp": "ts-node web/hp/generator.ts",
+		"gen:tags": "ts-node web/tags/generator.ts",
+		"gen:retreat": "ts-node web/retreat/generator.ts",
+		"gen:categories": "ts-node web/categories/generator.ts",
+		"gen:rarities": "ts-node web/rarities/generator.ts",
+		"gen:cards": "ts-node web/cards/generator.ts",
+		"gen:expansions": "ts-node web/expansions/generator.ts",
+		"cards:test": "tsc --noEmit --project tsconfig-cards.json",
+		"cards:compile": "tsc --project tsconfig-cards.json"
+	},
+	"dependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/node": "^13.7.0",
+		"glob": "^7.1.6",
+		"ts-node": "^8.6.2",
+		"typescript": "^3.7.5"
+	}
+}
