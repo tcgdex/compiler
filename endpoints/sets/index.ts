@@ -11,7 +11,7 @@ const endpoint = getBaseFolder(lang, "sets")
 
 const bootstrap = async () => {
 	const list = await getAllSets()
-	const items: Array<SetSimple> = []
+	let items: Array<Set> = []
 	for (let el of list) {
 		el = el.replace("./", "../../")
 		const set: Set = require(el).default
@@ -19,13 +19,17 @@ const bootstrap = async () => {
 		console.log(el)
 		if (!isSetAvailable(set, lang)) continue
 		items.push(
-			setToSetSimple(set, lang)
+			set
 		)
 	}
 
+	items = items.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1)
+
+	const tmp: Array<SetSimple> = items.map((el) => setToSetSimple(el, lang))
+
 	const cardList: SetList = {
-		count: items.length,
-		list: items
+		count: tmp.length,
+		list: tmp
 	}
 
 	await fs.mkdir(`${endpoint}`, {recursive: true})
