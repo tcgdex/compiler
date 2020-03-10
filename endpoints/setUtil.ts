@@ -40,7 +40,7 @@ export function isSetAvailable(set: Set, lang: Langs) {
 export function setToSetSimple(set: Set, lang: Langs): SetSimple {
 	return {
 		code: set.code,
-		name: set.name[lang],
+		name: typeof set.name === "string" ? set.name : set.name[lang],
 		total: set.cardCount.total
 	}
 }
