@@ -1,16 +1,19 @@
 import { promises as fs, promises } from 'fs'
 import * as glob from 'glob'
 
-export function getAllCards() {
-	return listFolder("./assets")
+export function getAllCards(set = "**", expansion = "**") {
+	return glob.sync(`./db/cards/${expansion}/${set}/*.js`).map(el => {
+		return el.substr(11, el.length-10-1-3)
+	})
 }
 
 export function getAllCards2(set = "**", expansion = "**") {
 	return glob.sync(`./db/cards/${expansion}/${set}/*.js`)
 }
 
-export function getAllSets() {
-	return glob.sync('./db/sets/**/*.js')
+export function getAllSets(expansion = "**", nameOnly = false) {
+	if (nameOnly) return glob.sync(`./db/sets/${expansion}/*.js`).map(el => el.substr(11+expansion.length, el.length-(10+expansion.length)-1-3))
+	return glob.sync(`./db/sets/${expansion}/*.js`)
 }
 
 export function getAllCardsJSON() {

@@ -10,6 +10,7 @@ import { abilityToAbilitySingle } from "./abilityUtil";
 import { getExpansion } from "./expansionUtil";
 import { getSet } from "./setUtil";
 import Expansion from "../db/interfaces/Expansion";
+import { fetchIllustrators, fetchIllustratorsSync } from "./illustratorUtil";
 
 export function cardToCardSimple(card: Card, lang: Langs): CardSimple {
 	return {
@@ -47,9 +48,9 @@ export function cardToCardSingle(card: Card, lang: Langs): CardSingle {
 		evolveFrom: card.evolveFrom && card.evolveFrom[lang],
 		evolveTo: card.evolveTo && card.evolveTo.map((el) => el[lang]),
 		tags: card.tags.map((el) => tagToTagSimple(el, lang)),
-		illustrator: {
-			id: 0,
-			name: typeof card.illustrator === "object" ? card.illustrator.name : card.illustrator,
+		illustrator: card.illustrator && {
+			id: fetchIllustratorsSync().indexOf(card.illustrator),
+			name: card.illustrator,
 		},
 
 		abilities: card.abilities && card.abilities.map((el) => abilityToAbilitySingle(el, lang)),

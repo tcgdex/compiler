@@ -28,6 +28,10 @@ export function getSet(card: Card): Set {
 	return setCache[card.set.code]
 }
 
+export function fetchSet(expansion: string, set: string): Set {
+	return require(`../db/sets/${expansion}/${set}.js`).default
+}
+
 export function isSetAvailable(set: Set, lang: Langs) {
 	if (!set.availability || !(lang in set.availability)) return true
 	return set.availability
