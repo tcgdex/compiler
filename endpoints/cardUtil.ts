@@ -89,3 +89,7 @@ export function isCardAvailable(card: Card, lang: Langs): boolean {
 	}
 	return true
 }
+
+export function fetchCard(card: string, set?: string, expansion?: string): Card {
+	return require(`../db/cards/${expansion && (expansion + "/") || ""}${set && (set + "/") || ""}${card}`).default
+}
