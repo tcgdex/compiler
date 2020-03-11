@@ -1,6 +1,6 @@
 import { getAllCards2, getBaseFolder } from "..//util"
-import Card from "../../db/interfaces/Card"
-import { Langs } from "../../db/interfaces/LangList"
+import Card from "@tcgdex/sdk/interfaces/Card"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import { cardToCardSingle, isCardAvailable } from "../cardUtil"
 

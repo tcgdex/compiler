@@ -1,5 +1,5 @@
 import { fetchIllustrators, illustratorToIllustratorSimple } from "../illustratorUtil"
-import { IllustratorsList } from "../../sdk/dist/types/interfaces/Illustrator"
+import { IllustratorsList } from "@tcgdex/sdk/interfaces/Illustrator"
 import { getBaseFolder } from "../util"
 import { promises as fs} from "fs"
 

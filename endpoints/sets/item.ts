@@ -1,6 +1,6 @@
 import { getBaseFolder, getAllSets } from "../util"
-import Set from "../../db/interfaces/Set"
-import { Langs } from "../../db/interfaces/LangList"
+import Set from "@tcgdex/sdk/interfaces/Set"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import { isSetAvailable, setToSetSingle } from "../setUtil"
 

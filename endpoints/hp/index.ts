@@ -1,7 +1,7 @@
 import { getAllCards, getBaseFolder } from "../util"
 import { fetchCard, isCardAvailable } from "../cardUtil"
-import { Langs } from "../../db/interfaces/LangList"
-import { HpList } from "../../sdk/dist/types/interfaces/Hp"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
+import { HpList } from "@tcgdex/sdk/interfaces/Hp"
 import { promises as fs } from 'fs'
 
 const lang = process.env.CARDLANG as Langs || "en"

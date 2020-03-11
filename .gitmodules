@@ -5,6 +5,3 @@
 [submodule "dist"]
 	path = dist
 	url = https://git.delta-wings.net/tcgdex/compiled.git
-[submodule "sdk"]
-	path = sdk
-	url = https://git.delta-wings.net/tcgdex/javascript-sdk.git

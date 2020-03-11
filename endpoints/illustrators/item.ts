@@ -1,10 +1,10 @@
 import { fetchIllustrators } from "../illustratorUtil"
-import { IllustratorSingle } from "../../sdk/dist/types/interfaces/Illustrator"
+import { IllustratorSingle } from "@tcgdex/sdk/interfaces/Illustrator"
 import { getBaseFolder, getAllCards } from "../util"
 import { promises as fs} from "fs"
-import Card from "../../db/interfaces/Card"
+import Card from "@tcgdex/sdk/interfaces/Card"
 import { isCardAvailable, cardToCardSimple } from "../cardUtil"
-import { Langs } from "../../db/interfaces/LangList"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "illustrators")

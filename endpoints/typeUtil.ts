@@ -1,10 +1,10 @@
-import Type from "../db/interfaces/Type";
-import LangList, { Langs } from "../db/interfaces/LangList";
-import { typeSimple } from "./types/type";
+import Type, { TypeSimple } from "@tcgdex/sdk/interfaces/Type";
+import LangList, { Langs } from "@tcgdex/sdk/interfaces/LangList";
+import TranslationUtil from "@tcgdex/sdk/TranslationUtil";
 
-export function typeToTypeSimple(type: Type, lang: Langs): typeSimple {
+export function typeToTypeSimple(type: Type, lang: Langs): TypeSimple {
 	return {
 		id: type,
-		name: Type.toLang(type, lang)
+		name: TranslationUtil.translate("type", type, lang)
 	}
 }

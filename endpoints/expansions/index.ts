@@ -1,10 +1,10 @@
 import { getAllExpansions, expansionToExpansionSimple } from "../expansionUtil"
-import Expansion from "../../db/interfaces/Expansion"
+import Expansion from "@tcgdex/sdk/interfaces/Expansion"
 import { getAllSets, getBaseFolder } from "../util"
 import { fetchSet } from "../setUtil"
 import { promises as fs } from 'fs'
-import { ExpansionList } from '../../sdk/dist/types/interfaces/Expansion'
-import { Langs } from "../../db/interfaces/LangList"
+import { ExpansionList } from '@tcgdex/sdk/interfaces/Expansion'
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "expansions")

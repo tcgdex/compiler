@@ -1,10 +1,10 @@
 import { getBaseFolder, getAllSets } from "../util"
-import Set from "../../db/interfaces/Set"
-import { Langs } from "../../db/interfaces/LangList"
+import Set from "@tcgdex/sdk/interfaces/Set"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import { isSetAvailable } from "../setUtil"
 import { getAllCards2 } from "../util"
-import Card from "../../db/interfaces/Card"
+import Card from "@tcgdex/sdk/interfaces/Card"
 import { cardToCardSingle, isCardAvailable } from "../cardUtil"
 
 const lang = process.env.CARDLANG as Langs || "en"

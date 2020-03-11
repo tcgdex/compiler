@@ -1,5 +1,5 @@
 import { getAllCards2 } from "../util"
-import Card from "../../db/interfaces/Card"
+import Card from "@tcgdex/sdk/interfaces/Card"
 
 import { promises as fs} from "fs"
 import { illustratorsFile, fetchIllustrators } from "../illustratorUtil"

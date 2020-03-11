@@ -7,23 +7,27 @@
 	"license": "MIT",
 	"private": false,
 	"scripts": {
-		"gen:all": "yarn gen:types && yarn gen:illustrators && yarn gen:hp && yarn gen:tags && yarn gen:retreat && yarn gen:categories && yarn gen:rarities && yarn gen:cards && yarn gen:expansions",
-		"gen:types": "ts-node web/types/generator.ts",
-		"gen:illustrators": "ts-node web/illustrators/generator.ts",
+		"db:compile": "cd db && tsc --project tsconfig.json",
+		"db:test": "cd db && tsc --noEmit --project tsconfig.json",
+		"gen:all": "yarn gen:types && yarn gen:illustrators && yarn gen:hp && yarn gen:sets && yarn gen:tags && yarn gen:retreat && yarn gen:categories && yarn gen:rarities && yarn gen:cards && yarn gen:expansions",
+		"gen:types": "ts-node endpoints/types/index.ts && ts-node endpoints/types/item.ts",
+		"gen:illustrators": "ts-node endpoints/illustrators/updateDB.ts && ts-node endpoints/illustrators/index.ts && ts-node endpoints/illustrators/item.ts",
 		"gen:hp": "ts-node web/hp/generator.ts",
+		"gen:sets": "ts-node endpoints/sets/index.ts && ts-node endpoints/sets/item.ts && ts-node endpoints/sets/subitem.ts",
 		"gen:tags": "ts-node web/tags/generator.ts",
 		"gen:retreat": "ts-node web/retreat/generator.ts",
 		"gen:categories": "ts-node web/categories/generator.ts",
 		"gen:rarities": "ts-node web/rarities/generator.ts",
-		"gen:cards": "ts-node web/cards/generator.ts",
-		"gen:expansions": "ts-node web/expansions/generator.ts",
-		"cards:test": "tsc --noEmit --project tsconfig-cards.json",
-		"cards:compile": "tsc --project tsconfig-cards.json"
+		"gen:cards": "ts-node endpoints/cards/index.ts && ts-node endpoints/cards/item.ts",
+		"gen:expansions": "ts-node endpoints/expansions/index.ts && ts-node endpoints/expansions/item.ts"
 	},
 	"dependencies": {
+		"@tcgdex/sdk": "^1.0.2",
+		"glob": "^7.1.6"
+	},
+	"devDependencies": {
 		"@types/glob": "^7.1.1",
-		"@types/node": "^13.7.0",
-		"glob": "^7.1.6",
+		"@types/node": "^13.7.4",
 		"ts-node": "^8.6.2",
 		"typescript": "^3.7.5"
 	}

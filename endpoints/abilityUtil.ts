@@ -1,7 +1,8 @@
-import Ability from "../db/interfaces/Ability";
-import { Langs } from "../db/interfaces/LangList";
-import AbilityType from "../db/interfaces/AbilityType";
-import { AbilitySimple, AbilitySingle } from "../sdk/dist/types/interfaces/Ability";
+import Ability from "@tcgdex/sdk/interfaces/Ability";
+import { Langs } from "@tcgdex/sdk/interfaces/LangList";
+import AbilityType from "@tcgdex/sdk/interfaces/AbilityType";
+import { AbilitySimple, AbilitySingle } from "@tcgdex/sdk/interfaces/Ability";
+import TranslationUtil from "@tcgdex/sdk/TranslationUtil";
 
 export function abilityToAbilitySimple(ability: Ability, lang: Langs): AbilitySimple {
 	return {
@@ -15,7 +16,7 @@ export function abilityToAbilitySingle(ability: Ability, lang: Langs): AbilitySi
 		text: ability.text[lang],
 		type: {
 			id: ability.type,
-			name: AbilityType.toLang(ability.type, lang)
+			name: TranslationUtil.translate("abilityType", ability.type, lang)
 		}
 	}
 }

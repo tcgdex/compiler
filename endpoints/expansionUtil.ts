@@ -1,8 +1,8 @@
-import Expansion from "../db/interfaces/Expansion"
-import Set from "../db/interfaces/Set"
+import Expansion from "@tcgdex/sdk/interfaces/Expansion"
+import Set from "@tcgdex/sdk/interfaces/Set"
 import * as glob from 'glob'
-import { Langs } from "../db/interfaces/LangList"
-import { ExpansionSingle } from "../sdk/dist/types/interfaces/Expansion"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
+import { ExpansionSingle } from "@tcgdex/sdk/interfaces/Expansion"
 import { getAllSets } from "./util"
 import { setToSetSimple, fetchSet } from "./setUtil"
 

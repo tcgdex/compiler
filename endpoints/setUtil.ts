@@ -1,10 +1,10 @@
-import Set from "../db/interfaces/Set"
-import Card from "../db/interfaces/Card"
+import Set from "@tcgdex/sdk/interfaces/Set"
+import Card from "@tcgdex/sdk/interfaces/Card"
 import * as glob from 'glob'
-import { Langs } from "../db/interfaces/LangList"
-import { SetSimple, SetSingle } from "../sdk/dist/types/interfaces/Set"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
+import { SetSimple, SetSingle } from "@tcgdex/sdk/interfaces/Set"
 import { cardToCardSimple } from "./cardUtil"
-import { CardSimple } from "../sdk/dist/types/interfaces/Card"
+import { CardSimple } from "@tcgdex/sdk/interfaces/Card"
 import { getAllCards2 } from "./util"
 
 interface t<T = Set> {

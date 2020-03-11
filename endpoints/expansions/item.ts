@@ -1,5 +1,5 @@
 import { getAllExpansions, fetchExpansion, expansionToExpansionSingle } from "../expansionUtil"
-import { Langs } from "../../db/interfaces/LangList"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { getBaseFolder } from "../util"
 import { promises as fs } from 'fs'
 

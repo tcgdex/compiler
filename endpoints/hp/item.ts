@@ -1,8 +1,8 @@
 import { getAllCards, getBaseFolder } from "../util"
 import { fetchCard, isCardAvailable, cardToCardSimple } from "../cardUtil"
-import Card from "../../db/interfaces/Card"
-import { Langs } from "../../db/interfaces/LangList"
-import { HpSingle } from "../../sdk/dist/types/interfaces/Hp"
+import Card from "@tcgdex/sdk/interfaces/Card"
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
+import { HpSingle } from "@tcgdex/sdk/interfaces/Hp"
 import { promises as fs } from 'fs'
 
 interface t {

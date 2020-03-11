@@ -1,6 +1,6 @@
 import { promises as fs} from "fs"
 import * as fsSync from 'fs'
-import { IllustratorSimple } from "../sdk/dist/types/interfaces/Illustrator"
+import { IllustratorSimple } from "@tcgdex/sdk/interfaces/Illustrator"
 
 export const illustratorsFile = "./generated/illustrators.json"
 

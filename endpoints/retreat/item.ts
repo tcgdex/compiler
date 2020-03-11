@@ -1,9 +1,9 @@
-import Card from "../../db/interfaces/Card"
+import Card from "@tcgdex/sdk/interfaces/Card"
 import { getAllCards2, getBaseFolder } from "../util"
 import { promises as fs } from 'fs'
 import { isCardAvailable, cardToCardSimple } from "../cardUtil"
-import { RetreatSingle } from '../../sdk/dist/types/interfaces/Retreat'
-import { Langs } from "../../db/interfaces/LangList"
+import { RetreatSingle } from '@tcgdex/sdk/interfaces/Retreat'
+import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 
 const lang = (process.env.CARDLANG || "en") as Langs
 const endpoint = getBaseFolder(lang, "retreat")

@@ -1,16 +1,16 @@
-import { CardSimple, CardSingle } from "../sdk/dist/types/interfaces/Card";
-import Card from "../db/interfaces/Card";
-import { Langs } from "../db/interfaces/LangList";
+import Card, { CardSimple, CardSingle } from "@tcgdex/sdk/interfaces/Card";
+import { Langs } from "@tcgdex/sdk/interfaces/LangList";
 import { typeToTypeSimple } from "./typeUtil";
 import { rarityToRaritySimple } from "./RarityUtil";
 import { tagToTagSimple } from "./TagUtil";
-import Category from "../db/interfaces/Category";
+import Category from "@tcgdex/sdk/interfaces/Category";
 import { attackToAttackSingle } from "./attackUtil";
 import { abilityToAbilitySingle } from "./abilityUtil";
 import { getExpansion } from "./expansionUtil";
 import { getSet } from "./setUtil";
-import Expansion from "../db/interfaces/Expansion";
+import Expansion from "@tcgdex/sdk/interfaces/Expansion";
 import { fetchIllustrators, fetchIllustratorsSync } from "./illustratorUtil";
+import TranslationUtil from "@tcgdex/sdk/TranslationUtil";
 
 export function cardToCardSimple(card: Card, lang: Langs): CardSimple {
 	return {
@@ -68,7 +68,7 @@ export function cardToCardSingle(card: Card, lang: Langs): CardSingle {
 
 		category: {
 			id: card.category,
-			name: Category.toLang(card.category, lang)
+			name: TranslationUtil.translate("category", card.category, lang)
 		},
 
 		set: {
