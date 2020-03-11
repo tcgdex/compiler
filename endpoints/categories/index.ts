@@ -1,6 +1,5 @@
 import { getBaseFolder } from "../util"
-import Category from '@tcgdex/sdk/interfaces/Category'
-import { categorySimple, categoryList } from "./category"
+import Category, { CategorySimple, CategoryList } from '@tcgdex/sdk/interfaces/Category'
 import TranslationUtil from "@tcgdex/sdk/TranslationUtil"
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
@@ -10,7 +9,7 @@ const endpoint = getBaseFolder(lang, "categories")
 
 const btsp = async () => {
 
-	const list: Array<categorySimple> = []
+	const list: Array<CategorySimple> = []
 	for (const cat of Object.values(Category)) {
 		if (typeof cat !== "number") continue
 		list.push({
@@ -19,7 +18,7 @@ const btsp = async () => {
 		})
 	}
 
-	const res: categoryList = {
+	const res: CategoryList = {
 		count: list.length,
 		list: list
 	}
