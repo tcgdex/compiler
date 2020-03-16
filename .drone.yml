@@ -37,7 +37,7 @@ steps:
         from_secret: PUSH_EMAIL
       PUSH_NAME:
         from_secret: PUSH_NAME
-  - name: Upload
+  - name: upload
     image: alpine
     commands:
     - apk -q add openssh-client sshpass
