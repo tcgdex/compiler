@@ -29,9 +29,9 @@ steps:
     - cd dist
     - git config --global user.email "$PUSH_EMAIL"
     - git config --global user.name "$PUSH_NAME"
-    - git add .
-    - git commit -m "Updated API"
-    - git push -u origin master
+    # - git add .
+    # - git commit -m "Updated API"
+    # - git push -u origin master
     environment:
       PUSH_EMAIL:
         from_secret: PUSH_EMAIL
@@ -41,7 +41,7 @@ steps:
     image: alpine
     commands:
     - apk -q add openssh-client sshpass
-    - "sshpass -p ${UPLOAD_PASSWORD} scp -vvv -r dist/ ${UPLOAD_USERNAME}@${UPLOAD_REMOTE}:${UPLOAD_DIST}"
+    - sshpass -p $UPLOAD_PASSWORD scp -vvv -r dist/ $UPLOAD_USERNAME@$UPLOAD_REMOTE:$UPLOAD_DIST
     environment:
       UPLOAD_USERNAME:
         from_secret: UPLOAD_USERNAME
