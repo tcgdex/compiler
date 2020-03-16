@@ -15,7 +15,7 @@ steps:
     commands:
     - apk -q add yarn
     - yarn
-    - yarn db:compile
+    # - yarn db:compile
 
   - name: compile
     image: node:alpine
@@ -48,4 +48,4 @@ steps:
         from_secret: UPLOAD_PASSWORD
       target:
         from_secret: UPLOAD_DIST
-      source: dist/
+      source: dist/*
