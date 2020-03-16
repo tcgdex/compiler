@@ -15,7 +15,7 @@ steps:
     commands:
     - apk -q add yarn
     - yarn
-    - yarn cards:compile
+    - yarn db:compile
 
   - name: compile
     image: node:alpine
