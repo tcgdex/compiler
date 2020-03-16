@@ -10,12 +10,10 @@ const endpoint = getBaseFolder(lang, "cards")
 
 const bootstrap = async () => {
 	const list = await getAllCards2()
-	console.log(list)
 	for (let el of list) {
 		el = el.replace("./", "../../")
 		const card: Card = require(el).default
 
-		console.log(el)
 		if (!isCardAvailable(card, lang)) continue
 
 		await fs.mkdir(`${endpoint}/${card.id}/`, {recursive: true})

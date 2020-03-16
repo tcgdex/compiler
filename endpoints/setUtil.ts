@@ -20,7 +20,6 @@ export function isSet(set: Set | {name: string, code: string}): set is Set {
 export function getSet(card: Card): Set {
 	if (!(card.set.code in setCache)) {
 		if (isSet(card.set)) setCache[card.set.code] = card.set
-		console.log(card.set.code)
 		let setPath = glob.sync(`./db/sets/**/${card.set.code}.js`)[0]
 		setPath = setPath.replace('./', '../')
 		setCache[card.set.code] = require(setPath).default
@@ -40,24 +39,31 @@ export function isSetAvailable(set: Set, lang: Langs) {
 export function setToSetSimple(set: Set, lang: Langs): SetSimple {
 	return {
 		code: set.code,
+		logo: set.images && set.images.logo,
+		symbol: set.images && set.images.symbol,
 		name: typeof set.name === "string" ? set.name : set.name[lang],
 		total: set.cardCount.total
 	}
 }
 
 export function getSetCards(set: Set, lang: Langs): Array<CardSimple> {
-	const cards = getAllCards2(set.code)
-	const items: Array<CardSimple> = []
-	for (let el of cards) {
+	const cardes = getAllCards2(set.code)
+	const cards: Array<Card> = []
+	for (let el of cardes) {
 		el = el.replace("./", "../")
 		const card: Card = require(el).default
 
-		items.push(
-			cardToCardSimple(card, lang)
+		cards.push(
+			card
 		)
 	}
 
-	return items
+	return cards.sort((a, b) => {
+		if (!isNaN(parseInt(a.localId + "")) && !isNaN(parseInt(b.localId + ""))) {
+			return parseInt(a.localId + "") - parseInt(b.localId + "")
+		}
+		return a.localId > b.localId ? 1 : -1
+	}).map(el => cardToCardSimple(el, lang))
 }
 
 export function setToSetSingle(set: Set, lang: Langs): SetSingle {

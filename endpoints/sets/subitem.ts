@@ -17,7 +17,6 @@ const bootstrap = async () => {
 		el = el.replace("./", "../../")
 		const set: Set = require(el).default
 
-		console.log(el)
 		if (!isSetAvailable(set, lang)) continue
 
 		const lit = await getAllCards2(set.code)
@@ -26,7 +25,6 @@ const bootstrap = async () => {
 			const card: Card = require(i).default
 
 			if (!isCardAvailable(card, lang)) continue
-			console.log(i)
 
 			await fs.mkdir(`${endpoint}/${set.code}/${card.localId}`, {recursive: true})
 			await fs.writeFile(`${endpoint}/${set.code}/${card.localId}/index.json`, JSON.stringify(cardToCardSingle(card, lang)))
@@ -36,7 +34,5 @@ const bootstrap = async () => {
 
 
 }
-
-console.log("Building sets/subitem")
 
 bootstrap()

@@ -27,9 +27,15 @@ export function expansionToExpansionSimple(expansion: Expansion, lang: Langs) {
 }
 
 export function expansionToExpansionSingle(expansion: Expansion, lang: Langs): ExpansionSingle {
+	const sets = getAllSets(expansion.code, true)
+		.map(el => fetchSet(expansion.code, el))
+		.sort((a, b) => {
+			return a.releaseDate > b.releaseDate ? 1 : -1
+		})
+		.map(el => setToSetSimple(el, lang))
 	return {
 		code: expansion.code,
 		name: typeof expansion.name === "string" ? expansion.name : expansion.name[lang],
-		sets: getAllSets(expansion.code, true).map(el => setToSetSimple(fetchSet(expansion.code, el), lang))
+		sets
 	}
 }

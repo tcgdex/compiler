@@ -9,12 +9,13 @@ import { abilityToAbilitySingle } from "./abilityUtil";
 import { getExpansion } from "./expansionUtil";
 import { getSet } from "./setUtil";
 import Expansion from "@tcgdex/sdk/interfaces/Expansion";
-import { fetchIllustrators, fetchIllustratorsSync } from "./illustratorUtil";
+import { fetchIllustratorsSync } from "./illustratorUtil";
 import TranslationUtil from "@tcgdex/sdk/TranslationUtil";
 
 export function cardToCardSimple(card: Card, lang: Langs): CardSimple {
 	return {
 		id: card.id,
+		localId: card.localId,
 		name: card.name[lang],
 		image: card.image && card.image.low[lang]
 	}

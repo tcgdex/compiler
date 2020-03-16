@@ -19,7 +19,6 @@ const btsp = async () => {
 			!isCardAvailable(card, lang) ||
 			!card.retreat
 		) continue
-		console.log(file)
 		if (!(card.retreat in count)) count[card.retreat] = []
 		count[card.retreat].push(card)
 	}

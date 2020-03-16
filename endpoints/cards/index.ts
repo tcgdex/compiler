@@ -16,7 +16,6 @@ const bootstrap = async () => {
 		el = el.replace("./", "../../")
 		const card: Card = require(el).default
 
-		console.log(el)
 		if (!isCardAvailable(card, lang)) continue
 		items.push(
 			cardToCardSimple(card, lang)

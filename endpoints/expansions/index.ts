@@ -22,7 +22,6 @@ const btsp = async () => {
 		expansion.sets = sets
 		let oldestRelease = "9999-99-99"
 		for (const j of sets) {
-			console.log(j)
 			const set = fetchSet(expansion.code, j)
 			oldestRelease = set.releaseDate < oldestRelease ? set.releaseDate : oldestRelease
 		}

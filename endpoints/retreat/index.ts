@@ -20,7 +20,6 @@ const btsp = async () => {
 			!card.retreat ||
 			count.includes(card.retreat)
 		) continue
-		console.log(file)
 		count.push(card.retreat)
 	}
 

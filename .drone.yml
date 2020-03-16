@@ -37,3 +37,17 @@ steps:
         from_secret: PUSH_EMAIL
       PUSH_NAME:
         from_secret: PUSH_NAME
+  - name: Upload
+    image: alpine
+    commands:
+    - apk -q add openssh-client
+    - sshpass -p ${UPLOAD_PASSWORD} scp -vvv -r dist/ ${UPLOAD_USERNAME}@${UPLOAD_REMOTE}:${UPLOAD_DIST}
+    environment:
+      UPLOAD_USERNAME:
+        from_secret: UPLOAD_USERNAME
+      UPLOAD_PASSWORD:
+        from_secret: UPLOAD_PASSWORD
+      UPLOAD_DIST:
+        from_secret: UPLOAD_DIST
+      UPLOAD_REMOTE:
+        from_secret: UPLOAD_REMOTE

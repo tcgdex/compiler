@@ -16,7 +16,6 @@ const bootstrap = async () => {
 		el = el.replace("./", "../../")
 		const set: Set = require(el).default
 
-		console.log(el)
 		if (!isSetAvailable(set, lang)) continue
 		items.push(
 			set
@@ -36,7 +35,5 @@ const bootstrap = async () => {
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(cardList))
 
 }
-
-console.log("Building sets/index")
 
 bootstrap()

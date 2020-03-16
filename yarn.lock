@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@tcgdex/sdk@^1.0.2":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@tcgdex/sdk/-/sdk-1.0.8.tgz#adeca1f69a5e32a7747678d566d1bd5f3f151b94"
-  integrity sha512-zHeUk+T3CuxBj8p9o5ThzM2YTs5J6g07TK0DLfC/65KVWXNJ2JvuMMYPUryo8ShcVI/nXReJQDPGylN/NRxyUw==
+"@tcgdex/sdk@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@tcgdex/sdk/-/sdk-1.2.1.tgz#c25f9b26ab632db935c6c11a50a75b8768c64ba2"
+  integrity sha512-gzGvKzZoMx66QJ0z6fsXy1i8hKzVImHYRXwu5p996ERRA7XCg8zx0TA0soZ0XEP3azRdF74SR1pQ6zyqtRalIg==
   dependencies:
     isomorphic-unfetch "^3.0.0"
 

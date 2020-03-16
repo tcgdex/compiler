@@ -15,7 +15,6 @@ const bootstrap = async () => {
 		const set: Set = require(el).default
 
 		if (!isSetAvailable(set, lang)) continue
-		console.log(el)
 
 		await fs.mkdir(`${endpoint}/${set.code}/`, {recursive: true})
 		await fs.writeFile(`${endpoint}/${set.code}/index.json`, JSON.stringify(setToSetSingle(set, lang)))
@@ -23,6 +22,5 @@ const bootstrap = async () => {
 
 
 }
-console.log("Building sets/item")
 
 bootstrap()

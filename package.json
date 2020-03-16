@@ -1,5 +1,5 @@
 {
-	"name": "tcgdex-compiler",
+	"name": "@tcgdex/compiler",
 	"version": "1.0.0",
 	"main": "index.js",
 	"repository": "git@git.delta-wings.net:tcgdex/compiler.git",
@@ -12,17 +12,17 @@
 		"gen:all": "yarn gen:types && yarn gen:illustrators && yarn gen:hp && yarn gen:sets && yarn gen:tags && yarn gen:retreat && yarn gen:categories && yarn gen:rarities && yarn gen:cards && yarn gen:expansions",
 		"gen:types": "ts-node endpoints/types/index.ts && ts-node endpoints/types/item.ts",
 		"gen:illustrators": "ts-node endpoints/illustrators/updateDB.ts && ts-node endpoints/illustrators/index.ts && ts-node endpoints/illustrators/item.ts",
-		"gen:hp": "ts-node web/hp/generator.ts",
+		"gen:hp": "ts-node endpoints/hp/index.ts && ts-node endpoints/hp/item.ts",
 		"gen:sets": "ts-node endpoints/sets/index.ts && ts-node endpoints/sets/item.ts && ts-node endpoints/sets/subitem.ts",
-		"gen:tags": "ts-node web/tags/generator.ts",
-		"gen:retreat": "ts-node web/retreat/generator.ts",
-		"gen:categories": "ts-node web/categories/generator.ts",
-		"gen:rarities": "ts-node web/rarities/generator.ts",
+		"gen:tags": "ts-node endpoints/tags/index.ts && ts-node endpoints/tags/item.ts",
+		"gen:retreat": "ts-node endpoints/retreat/index.ts && ts-node endpoints/retreat/item.ts",
+		"gen:categories": "ts-node endpoints/categories/index.ts && ts-node endpoints/categories/item.ts",
+		"gen:rarities": "ts-node endpoints/rarities/index.ts && ts-node endpoints/rarities/item.ts",
 		"gen:cards": "ts-node endpoints/cards/index.ts && ts-node endpoints/cards/item.ts",
 		"gen:expansions": "ts-node endpoints/expansions/index.ts && ts-node endpoints/expansions/item.ts"
 	},
 	"dependencies": {
-		"@tcgdex/sdk": "^1.0.2",
+		"@tcgdex/sdk": "next",
 		"glob": "^7.1.6"
 	},
 	"devDependencies": {

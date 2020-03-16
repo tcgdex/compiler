@@ -16,7 +16,6 @@ const btsp = async () => {
 		const card: Card = require(i).default
 
 		if (!card.illustrator) continue
-		console.log(i)
 
 		const illustrator = card.illustrator
 
