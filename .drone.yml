@@ -21,7 +21,7 @@ steps:
     image: node:alpine
     commands:
     - apk -q add yarn
-    - yarn gen:all
+    # - yarn gen:all
 
   - name: push
     image: alpine/git
@@ -40,7 +40,7 @@ steps:
   - name: Upload
     image: alpine
     commands:
-    - apk -q add openssh-client
+    - apk -q add openssh-client sshpass
     - "sshpass -p ${UPLOAD_PASSWORD} scp -vvv -r dist/ ${UPLOAD_USERNAME}@${UPLOAD_REMOTE}:${UPLOAD_DIST}"
     environment:
       UPLOAD_USERNAME:
