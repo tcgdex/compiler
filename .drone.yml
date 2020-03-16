@@ -41,8 +41,11 @@ steps:
     image: alpine
     commands:
     - apk -q add openssh-client sshpass
+    - echo $KNOWN_HOST > ~/.ssh/known_host
     - ./upload.sh
     environment:
+      KNOWN_HOST:
+        from_secret: KNOWN_HOST
       UPLOAD_USERNAME:
         from_secret: UPLOAD_USERNAME
       UPLOAD_PASSWORD:
