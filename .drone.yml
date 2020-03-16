@@ -38,16 +38,14 @@ steps:
       PUSH_NAME:
         from_secret: PUSH_NAME
   - name: Upload
-    image: alpine
-    commands:
-    - apk -q add openssh-client sshpass
-    - sshpass -p $UPLOAD_PASSWORD scp -vvv -r dist/ $UPLOAD_USERNAME@$UPLOAD_REMOTE:$UPLOAD_DIST
-    environment:
-      UPLOAD_USERNAME:
-        from_secret: UPLOAD_USERNAME
-      UPLOAD_PASSWORD:
-        from_secret: UPLOAD_PASSWORD
-      UPLOAD_DIST:
-        from_secret: UPLOAD_DIST
-      UPLOAD_REMOTE:
+    image: appleboy/drone-scp
+    settings:
+      host:
         from_secret: UPLOAD_REMOTE
+      user:
+        from_secret: UPLOAD_USERNAME
+      password:
+        from_secret: UPLOAD_PASSWORD
+      target:
+        from_secret: UPLOAD_DIST
+      source: dist/
