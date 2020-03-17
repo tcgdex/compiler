@@ -3,50 +3,47 @@ name: default
 type: docker
 
 steps:
-  - name: submodules
+  - name: Submodules
     image: alpine/git
     commands:
     - git submodule update --init --recursive
     - git submodule foreach git checkout master
     - git submodule foreach git pull origin master
 
-  - name: prepare
+  - name: Prepare
     image: node:alpine
     commands:
     - apk -q add yarn
     - yarn
-    # - yarn db:compile
+    - yarn db:compile
 
-  - name: compile
+  - name: Compile
     image: node:alpine
     commands:
     - apk -q add yarn
-    # - yarn gen:all
+    - yarn gen:all
+    - CARDLANG=fr yarn gen:all
 
-  - name: push
+  - name: Push
     image: alpine/git
     commands:
     - cd dist
     - git config --global user.email "$PUSH_EMAIL"
     - git config --global user.name "$PUSH_NAME"
-    # - git add .
-    # - git commit -m "Updated API"
-    # - git push -u origin master
+    - git add .
+    - git commit -m "Updated API"
+    - git push -u origin master
     environment:
       PUSH_EMAIL:
         from_secret: PUSH_EMAIL
       PUSH_NAME:
         from_secret: PUSH_NAME
-  - name: upload
-    image: alpine
+
+  - name: Upload
+    image: node:alpine
     commands:
-    - apk -q add openssh-client sshpass
-    - mkdir -p ~/.ssh/
-    - echo $KNOWN_HOST > ~/.ssh/known_host
-    - ./upload.sh
+      - node upload.js
     environment:
-      KNOWN_HOST:
-        from_secret: KNOWN_HOST
       UPLOAD_USERNAME:
         from_secret: UPLOAD_USERNAME
       UPLOAD_PASSWORD:
