@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@tcgdex/sdk@next":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@tcgdex/sdk/-/sdk-1.2.1.tgz#c25f9b26ab632db935c6c11a50a75b8768c64ba2"
-  integrity sha512-gzGvKzZoMx66QJ0z6fsXy1i8hKzVImHYRXwu5p996ERRA7XCg8zx0TA0soZ0XEP3azRdF74SR1pQ6zyqtRalIg==
+"@tcgdex/sdk@^1.2.1":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@tcgdex/sdk/-/sdk-1.4.0.tgz#b6c44f6e1ffbc7b8c95351f4bfd76c4506428d47"
+  integrity sha512-YlFFjkZ5lQFPvE9nppnIOBeUO0C0xKqtxLqH99rbIL/CGPMSL/lZ7O4Wjh4gDCIexc/hbUjZ1bx9Pb+YH5WoFw==
   dependencies:
     isomorphic-unfetch "^3.0.0"
 
@@ -29,9 +29,9 @@
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
 "@types/node@*", "@types/node@^13.7.4":
-  version "13.9.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.0.tgz#5b6ee7a77faacddd7de719017d0bc12f52f81589"
-  integrity sha512-0ARSQootUG1RljH2HncpsY2TJBfGQIKOOi7kxzUY6z54ePu/ZD+wJA8zI2Q6v8rol2qpG/rvqsReco8zNMPvhQ==
+  version "13.13.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.2.tgz#160d82623610db590a64e8ca81784e11117e5a54"
+  integrity sha512-LB2R1Oyhpg8gu4SON/mfforE525+Hi/M1ineICEDftqNVTyFg1aRIeGuTvXAoWHc4nbrFncWtJgMmoyRvuGh7A==
 
 arg@^4.1.0:
   version "4.1.3"
@@ -181,10 +181,10 @@ safer-buffer@~2.1.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-source-map-support@^0.5.6:
-  version "0.5.16"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.16.tgz#0ae069e7fe3ba7538c64c98515e35339eac5a042"
-  integrity sha512-efyLRJDr68D9hBBNIPWFjhpFzURh+KJykQwvMyW5UiZzYwoF6l4YMMDIJJEyFWxWCqfyxLzz6tSfUFR+kXXsVQ==
+source-map-support@^0.5.17:
+  version "0.5.19"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.19.tgz#a98b62f86dcaf4f67399648c085291ab9e8fed61"
+  integrity sha512-Wonm7zOCIJzBGQdB+thsPar0kYuCIzYvxZwlBa87yi/Mdjv7Tip2cyVbLj5o0cFPN4EVkuTwb3GDDyUx2DGnGw==
   dependencies:
     buffer-from "^1.0.0"
     source-map "^0.6.0"
@@ -195,13 +195,13 @@ source-map@^0.6.0:
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
 
 ssh2-sftp-client@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/ssh2-sftp-client/-/ssh2-sftp-client-5.1.1.tgz#6fb349d56868a5adba84e1672583d86de98250f8"
-  integrity sha512-IxdwcaipuWyLcGCZ/mIVsrZraSbWV5clmN5xSWPvjNDWrxmLp8lU+A56J9aeBkWhlO1mtgoN6m8xeyb93/U4Sg==
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/ssh2-sftp-client/-/ssh2-sftp-client-5.1.2.tgz#8138f050c5933bbeb2f916f2a1513f124ad61116"
+  integrity sha512-pKmoDdxa4jwjMr+eZTm2IP8iYxuyM/O74rbz54t0UcETnRNmkLnv3NmKiFK5/hstacyO3WS4Tu8fRBGVGY0UAQ==
   dependencies:
     concat-stream "^2.0.0"
     retry "^0.12.0"
-    ssh2 "^0.8.8"
+    ssh2 "^0.8.9"
 
 ssh2-streams@~0.4.10:
   version "0.4.10"
@@ -212,7 +212,7 @@ ssh2-streams@~0.4.10:
     bcrypt-pbkdf "^1.0.2"
     streamsearch "~0.1.2"
 
-ssh2@^0.8.8:
+ssh2@^0.8.9:
   version "0.8.9"
   resolved "https://registry.yarnpkg.com/ssh2/-/ssh2-0.8.9.tgz#54da3a6c4ba3daf0d8477a538a481326091815f3"
   integrity sha512-GmoNPxWDMkVpMFa9LVVzQZHF6EW3WKmBwL+4/GeILf2hFmix5Isxm7Amamo8o7bHiU0tC+wXsGcUXOxp8ChPaw==
@@ -232,14 +232,14 @@ string_decoder@^1.1.1:
     safe-buffer "~5.2.0"
 
 ts-node@^8.6.2:
-  version "8.6.2"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.6.2.tgz#7419a01391a818fbafa6f826a33c1a13e9464e35"
-  integrity sha512-4mZEbofxGqLL2RImpe3zMJukvEvcO1XP8bj8ozBPySdCUXEcU5cIRwR0aM3R+VoZq7iXc8N86NC0FspGRqP4gg==
+  version "8.9.0"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.9.0.tgz#d7bf7272dcbecd3a2aa18bd0b96c7d2f270c15d4"
+  integrity sha512-rwkXfOs9zmoHrV8xE++dmNd6ZIS+nmHHCxcV53ekGJrxFLMbp+pizpPS07ARvhwneCIECPppOwbZHvw9sQtU4w==
   dependencies:
     arg "^4.1.0"
     diff "^4.0.1"
     make-error "^1.1.1"
-    source-map-support "^0.5.6"
+    source-map-support "^0.5.17"
     yn "3.1.1"
 
 tweetnacl@^0.14.3:

@@ -1,6 +1,8 @@
 import { promises as fs, promises } from 'fs'
 import * as glob from 'glob'
 
+const VERSION = 'v1'
+
 export function getAllCards(set = "**", expansion = "**") {
 	return glob.sync(`./db/cards/${expansion}/${set}/*.js`).map(el => {
 		return el.substr(11, el.length-10-1-3)
@@ -33,7 +35,7 @@ async function listFolder(folder: string): Promise<Array<string>> {
 }
 
 export function getBaseFolder(lang: string, endpoint: string) {
-	return `./dist/${lang}/${endpoint}`
+	return `./dist/${VERSION}/${lang}/${endpoint}`
 }
 
 export async function del(path: string) {
