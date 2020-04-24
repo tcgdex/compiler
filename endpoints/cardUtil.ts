@@ -76,9 +76,6 @@ export function cardToCardSingle(card: Card, lang: Langs): CardSingle {
 			name: typeof card.set.name === "object" ? card.set.name[lang] : card.set.name,
 			code: card.set.code
 		},
-
-		cardTypes: card.cardTypes && card.cardTypes
-
 	}
 }
 
