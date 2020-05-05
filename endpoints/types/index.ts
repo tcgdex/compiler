@@ -8,8 +8,8 @@ import { List } from "@tcgdex/sdk/interfaces/General"
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "types")
 
-const btsp = async () => {
-
+export default async () => {
+	console.log(endpoint)
 	const typeArr: Array<TypeSimple> = []
 	for (const i of Object.values(Type)) {
 		if (typeof i !== "number") continue
@@ -26,6 +26,5 @@ const btsp = async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(typeList))
+	console.log('ended ' + endpoint)
 }
-
-btsp()

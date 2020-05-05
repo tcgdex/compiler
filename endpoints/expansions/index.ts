@@ -10,7 +10,8 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "expansions")
 
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 	const expansions = getAllExpansions()
 	let list: Array<{
 		release: string,
@@ -40,6 +41,5 @@ const btsp = async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
+	console.log('ended ' + endpoint)
 }
-
-btsp()

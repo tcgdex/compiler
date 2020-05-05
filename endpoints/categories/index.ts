@@ -7,7 +7,8 @@ import { promises as fs } from 'fs'
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "categories")
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 
 	const list: Array<CategorySimple> = []
 	for (const cat of Object.values(Category)) {
@@ -25,5 +26,5 @@ const btsp = async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
+	console.log('ended ' + endpoint)
 }
-btsp()

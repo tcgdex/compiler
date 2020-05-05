@@ -6,7 +6,8 @@ import { promises as fs} from "fs"
 const lang = process.env.CARDLANG || "en"
 const endpoint = getBaseFolder(lang, "illustrators")
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 
 	const db = await fetchIllustrators()
 
@@ -17,6 +18,5 @@ const btsp = async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
+	console.log('ended ' + endpoint)
 }
-
-btsp()

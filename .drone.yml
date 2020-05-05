@@ -22,8 +22,8 @@ steps:
     commands:
     - apk -q add yarn
     - rm -r dist/*
-    - yarn gen:all
-    - CARDLANG=fr yarn gen:all
+    - yarn gen
+    - CARDLANG=fr yarn gen
 
   - name: Push
     image: alpine/git

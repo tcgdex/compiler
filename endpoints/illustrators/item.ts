@@ -13,7 +13,8 @@ interface t {
 	[key: string]: Array<Card>
 }
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 
 	const db = await fetchIllustrators()
 	const cards = getAllCards()
@@ -44,6 +45,5 @@ const btsp = async () => {
 			await fs.writeFile(`${endpoint}/${toSave.id}/index.json`, JSON.stringify(toSave))
 		}
 	}
+	console.log('ended ' + endpoint)
 }
-
-btsp()

@@ -8,7 +8,8 @@ const lang = process.env.CARDLANG as Langs || "en"
 
 const endpoint = getBaseFolder(lang, "cards")
 
-const bootstrap = async () => {
+export default async () => {
+	console.log(endpoint)
 	const list = await getAllCards2()
 	for (let el of list) {
 		el = el.replace("./", "../../")
@@ -21,6 +22,5 @@ const bootstrap = async () => {
 
 		// if (if (typeof card.set.availability === "undefined"))
 	}
+	console.log('ended ' + endpoint)
 }
-
-bootstrap()

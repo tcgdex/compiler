@@ -6,7 +6,7 @@ import { illustratorsFile, fetchIllustrators } from "../illustratorUtil"
 
 const dbFile = illustratorsFile
 
-const btsp = async () => {
+export default async () => {
 	const db = await fetchIllustrators()
 
 
@@ -26,5 +26,3 @@ const btsp = async () => {
 
 	await fs.writeFile(dbFile, JSON.stringify(db))
 }
-
-btsp()

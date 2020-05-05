@@ -7,7 +7,8 @@ import Rarity, { RaritySimple, RarityList } from "@tcgdex/sdk/interfaces/Rarity"
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "rarities")
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 
 	const list: Array<RaritySimple> = []
 	for (const cat of Object.values(Rarity)) {
@@ -25,5 +26,5 @@ const btsp = async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
+	console.log('ended ' + endpoint)
 }
-btsp()

@@ -91,3 +91,7 @@ export function isCardAvailable(card: Card, lang: Langs): boolean {
 export function fetchCard(card: string, set?: string, expansion?: string): Card {
 	return require(`../db/cards/${expansion && (expansion + "/") || ""}${set && (set + "/") || ""}${card}`).default
 }
+
+export async function fetchCardAsync(card: string, set?: string, expansion?: string): Promise<Card> {
+	return (await import(`../db/cards/${expansion && (expansion + "/") || ""}${set && (set + "/") || ""}${card}`)).default
+}

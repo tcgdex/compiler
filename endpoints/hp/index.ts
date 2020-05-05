@@ -8,7 +8,8 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "hp")
 
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 	const cards = getAllCards()
 
 	const hps: Array<number> = []
@@ -29,6 +30,5 @@ const btsp = async () => {
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(hpList))
 
+	console.log('ended ' + endpoint)
 }
-
-btsp()

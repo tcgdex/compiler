@@ -9,7 +9,8 @@ const lang = process.env.CARDLANG as Langs || "en"
 
 const endpoint = getBaseFolder(lang, "cards")
 
-const bootstrap = async () => {
+export default async () => {
+	console.log(endpoint)
 	const list = await getAllCards2()
 	const items: Array<CardSimple> = []
 	for (let el of list) {
@@ -32,6 +33,5 @@ const bootstrap = async () => {
 	await fs.mkdir(`${endpoint}`, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(cardList))
 
+	console.log('ended ' + endpoint)
 }
-
-bootstrap()

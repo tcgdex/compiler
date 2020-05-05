@@ -14,7 +14,8 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "types")
 
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 	const list = getAllCards()
 	const arr: typeCards = {}
 	for (const i of list) {
@@ -48,6 +49,5 @@ const btsp = async () => {
 			await promises.writeFile(`${name}/index.json`, JSON.stringify(toSave))
 		}
 	}
+	console.log('ended ' + endpoint)
 }
-
-btsp()

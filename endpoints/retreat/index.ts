@@ -8,7 +8,8 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 const lang = (process.env.CARDLANG || "en") as Langs
 const endpoint = getBaseFolder(lang, "retreat")
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 	const files = await getAllCards2()
 	const count: Array<number> = []
 	for (let file of files) {
@@ -30,6 +31,5 @@ const btsp = async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(list))
+	console.log('ended ' + endpoint)
 }
-
-btsp()

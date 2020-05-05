@@ -1,5 +1,5 @@
 import { getAllCards, getBaseFolder, urlize } from "../util"
-import { fetchCard, isCardAvailable, cardToCardSimple } from "../cardUtil"
+import { fetchCard, isCardAvailable, cardToCardSimple, fetchCardAsync } from "../cardUtil"
 import Card from "@tcgdex/sdk/interfaces/Card"
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import TranslationUtil from "@tcgdex/sdk/TranslationUtil"
@@ -14,11 +14,12 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "rarities")
 
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 	const list = getAllCards()
 	const arr: rarityCards = {}
 	for (const i of list) {
-		const card = await fetchCard(i)
+		const card = await fetchCardAsync(i)
 
 		if (!isCardAvailable(card, lang)) continue
 
@@ -49,6 +50,5 @@ const btsp = async () => {
 			await promises.writeFile(`${name}/index.json`, JSON.stringify(toSave))
 		}
 	}
+	console.log('ended ' + endpoint)
 }
-
-btsp()

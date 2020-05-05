@@ -12,7 +12,8 @@ interface t {
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "hp")
 
-const btsp = async () => {
+export default async () => {
+	console.log(endpoint)
 	const files = getAllCards()
 	const pools: t = {}
 	for (const file of files) {
@@ -37,6 +38,5 @@ const btsp = async () => {
 			await fs.writeFile(`${endpoint}/${toSave.hp}/index.json`, JSON.stringify(toSave))
 		}
 	}
+	console.log('ended ' + endpoint)
 }
-
-btsp()
