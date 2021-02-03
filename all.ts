@@ -45,7 +45,7 @@ import { fetchRemoteFile } from './endpoints/util'
 		fetchRemoteFile('https://assets.tcgdex.net/data-fr.json'),
 		fetchRemoteFile('https://assets.tcgdex.net/data-univ.json')
 	])
-	logger.log('UPDATING...')
+	logger.log('Updating...')
 	await Promise.all([
 		cardIndex(),
 		cardItem(),
@@ -61,11 +61,9 @@ import { fetchRemoteFile } from './endpoints/util'
 
 		illustratorsIndex(),
 		illustratorsItem(),
-		illustratorsDB(),
 
 		raritiesIndex(),
 		raritiesItem(),
-
 
 		retreatIndex(),
 		retreatItem(),

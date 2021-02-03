@@ -6,8 +6,8 @@ import TranslationUtil from "@tcgdex/sdk/TranslationUtil"
 import { promises } from "fs"
 import Rarity, { RaritySingle } from "@tcgdex/sdk/interfaces/Rarity"
 
-import { logger as console } from '@dzeio/logger'
-console.prefix = 'Rarities/Item'
+import Logger from '@dzeio/logger'
+const logger = new Logger('rarities/item')
 
 
 type rarityCards = {
@@ -19,13 +19,13 @@ const endpoint = getBaseFolder(lang, "rarities")
 
 
 export default async () => {
-	console.log(endpoint)
-	const list = getAllCards()
+	logger.log('Fetching Cards')
+	const list = await getAllCards()
 	const arr: rarityCards = {}
 	for (const i of list) {
-		const card = await fetchCardAsync(i)
+		const card: Card = (await import(i)).default
 
-		if (!isCardAvailable(card, lang)) continue
+		if (!(await isCardAvailable(card, lang))) continue
 
 		const c = card.rarity
 
@@ -38,6 +38,7 @@ export default async () => {
 		if (arr.hasOwnProperty(cat)) {
 			const cards: Array<Card> = arr[cat];
 			const rCat: Rarity = parseInt(cat)
+			logger.log('Processing Rarity', TranslationUtil.translate("rarity", rCat, lang))
 			const toSave: RaritySingle = {
 				id: rCat,
 				name: TranslationUtil.translate("rarity", rCat, lang),
@@ -54,5 +55,5 @@ export default async () => {
 			await promises.writeFile(`${name}/index.json`, JSON.stringify(toSave))
 		}
 	}
-	console.log('ended ' + endpoint)
+	logger.log('ended ' + endpoint)
 }

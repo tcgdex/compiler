@@ -2,21 +2,24 @@ import { getBaseFolder, getAllSets } from "../util"
 import Set from "@tcgdex/sdk/interfaces/Set"
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
-import { isSetAvailable, setToSetSingle } from "../setUtil"
+import { fetchSet, isSetAvailable, setToSetSingle } from "../setUtil"
+import { getExpansionFromSetName } from "../expansionUtil"
 
-import { logger as console } from '@dzeio/logger'
-console.prefix = 'Sets/Item'
+import Logger from '@dzeio/logger'
+const logger = new Logger('sets/item')
 
 const lang = process.env.CARDLANG as Langs || "en"
 
 const endpoint = getBaseFolder(lang, "sets")
 
 export default async () => {
-	console.log(endpoint)
+	logger.log('Fetching Sets')
 	const list = await getAllSets()
+	logger.log(list)
 	for (let el of list) {
-		el = el.replace("./", "../../")
-		const set: Set = require(el).default
+		logger.log('Processing set', el)
+		const expansion = (await getExpansionFromSetName(el))
+		const set: Set = await fetchSet(expansion.code, el)
 
 		if (!isSetAvailable(set, lang)) continue
 
@@ -25,5 +28,5 @@ export default async () => {
 	}
 
 
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

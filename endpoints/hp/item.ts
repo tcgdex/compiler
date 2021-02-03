@@ -5,6 +5,9 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { HpSingle } from "@tcgdex/sdk/interfaces/Hp"
 import { promises as fs } from 'fs'
 
+import Logger from '@dzeio/logger'
+const logger = new Logger('hp/item')
+
 interface t {
 	[key: number]: Array<Card>
 }
@@ -13,13 +16,13 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "hp")
 
 export default async () => {
-	console.log(endpoint)
-	const files = getAllCards()
+	logger.log('Fetching Cards')
+	const files = await getAllCards()
 	const pools: t = {}
 	for (const file of files) {
-		const card = fetchCard(file)
+		const card: Card = (await import(file)).default
 
-		if (!isCardAvailable(card, lang) || !card.hp) continue
+		if (!(await isCardAvailable(card, lang)) || !card.hp) continue
 
 		if (!(card.hp in pools)) pools[card.hp] = []
 		pools[card.hp].push(card)
@@ -27,6 +30,7 @@ export default async () => {
 
 	for (const hp in pools) {
 		if (pools.hasOwnProperty(hp)) {
+			logger.log('Processing HP', hp)
 			const cards = pools[hp];
 
 			const toSave: HpSingle = {
@@ -38,5 +42,5 @@ export default async () => {
 			await fs.writeFile(`${endpoint}/${toSave.hp}/index.json`, JSON.stringify(toSave))
 		}
 	}
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

@@ -6,6 +6,9 @@ import TranslationUtil from "@tcgdex/sdk/TranslationUtil"
 import { promises } from "fs"
 import Category, { CategorySingle } from "@tcgdex/sdk/interfaces/Category"
 
+import Logger from '@dzeio/logger'
+const logger = new Logger('category/item')
+
 type categoryCards = {
 	[key in Category]?: Array<Card>
 }
@@ -14,14 +17,15 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "categories")
 
 
+
 export default async () => {
-	console.log(endpoint)
-	const list = getAllCards()
+	logger.log('Fetching Cards')
+	const list = await getAllCards()
 	const arr: categoryCards = {}
 	for (const i of list) {
-		const card = await fetchCard(i)
+		const card: Card = (await import(i)).default
 
-		if (!isCardAvailable(card, lang)) continue
+		if (!(await isCardAvailable(card, lang))) continue
 
 		const c = card.category
 
@@ -34,6 +38,7 @@ export default async () => {
 		if (arr.hasOwnProperty(cat)) {
 			const cards: Array<Card> = arr[cat];
 			const rCat: Category = parseInt(cat)
+			logger.log('Processing Category', TranslationUtil.translate("category", rCat, lang))
 			const toSave: CategorySingle = {
 				id: rCat,
 				name: TranslationUtil.translate("category", rCat, lang),
@@ -50,5 +55,5 @@ export default async () => {
 			await promises.writeFile(`${name}/index.json`, JSON.stringify(toSave))
 		}
 	}
-	console.log('ended ' + endpoint)
+	logger.log('ended ' + endpoint)
 }

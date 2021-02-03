@@ -4,15 +4,15 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import Rarity, { RaritySimple, RarityList } from "@tcgdex/sdk/interfaces/Rarity"
 
-import { logger as console } from '@dzeio/logger'
-console.prefix = 'Rarities/Index'
+import Logger from '@dzeio/logger'
+const logger = new Logger('rarities/index')
 
 
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "rarities")
 
 export default async () => {
-	console.log(endpoint)
+	logger.log('Fetching Rarities')
 
 	const list: Array<RaritySimple> = []
 	for (const cat of Object.values(Rarity)) {
@@ -27,8 +27,8 @@ export default async () => {
 		count: list.length,
 		list: list
 	}
-
+	logger.log('Writing to file')
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

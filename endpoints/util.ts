@@ -1,68 +1,23 @@
-import { promises as fs, promises } from 'fs'
 import * as glob from 'glob'
 import fetch from 'node-fetch'
 
 const VERSION = 'v1'
 
-export function getAllCards(set = "**", expansion = "**") {
-	return glob.sync(`./db/cards/${expansion}/${set}/*.js`).map(el => {
-		return el.substr(11, el.length-10-1-3)
-	})
+export async function getAllCards(set = "**", expansion = "**") {
+	return (await smartGlob(`./db/cards/${expansion}/${set}/*.js`)).map((it) => it.replace('./', '../../'))
 }
 
 export function getAllCards2(set = "**", expansion = "**") {
 	return glob.sync(`./db/cards/${expansion}/${set}/*.js`)
 }
 
-export function getAllSets(expansion = "**", nameOnly = false) {
-	if (nameOnly) return glob.sync(`./db/sets/${expansion}/*.js`).map(el => el.substr(11+expansion.length, el.length-(10+expansion.length)-1-3))
-	return glob.sync(`./db/sets/${expansion}/*.js`)
-}
-
-export function getAllCardsJSON() {
-	return glob.sync("./db/cards/**/**/*.json")
-}
-
-async function listFolder(folder: string): Promise<Array<string>> {
-	const files = await fs.readdir(folder)
-	const res = []
-	for (const file of files) {
-		if (file.endsWith(".json")) res.push(`${folder}/${file}`)
-		if ((await fs.stat(`${folder}/${file}`)).isDirectory()) {
-			res.push(...await listFolder(`${folder}/${file}`))
-		}
-	}
-	return res
+export async function getAllSets(expansion = "**") {
+	return (await smartGlob(`./db/sets/${expansion}/*.js`))
+		.map(el => el.substring(el.lastIndexOf('/') + 1, el.lastIndexOf('.')))
 }
 
 export function getBaseFolder(lang: string, endpoint: string) {
 	return `./dist/${VERSION}/${lang}/${endpoint}`
-}
-
-export async function del(path: string) {
-	let files = []
-	const promiseArr = []
-	try {
-		files = await promises.readdir(path)
-	} catch {
-		return
-	}
-	if (files.length > 0) {
-		for (const file of files) {
-			const fPath = `${path}/${file}`
-			if ((await promises.stat(fPath)).isDirectory()) {
-				promiseArr.push(
-					del(fPath)
-				)
-			} else {
-				promiseArr.push(
-					promises.unlink(fPath)
-				)
-			}
-		}
-	}
-	await Promise.all(promiseArr)
-	await promises.rmdir(path)
 }
 
 export function urlize(str: string): string {
@@ -83,4 +38,13 @@ export async function fetchRemoteFile<T = any>(url: string): Promise<T> {
 		fileCache[url] = resp.json()
 	}
 	return fileCache[url]
+}
+
+const globCache: Record<string, Array<string>> = {}
+
+export async function smartGlob(query: string) {
+	if (!globCache[query]) {
+		globCache[query] = await new Promise((res) => glob(query, (err, matches) => res(matches)))
+	}
+	return globCache[query]
 }

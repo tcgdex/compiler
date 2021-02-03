@@ -9,7 +9,7 @@ import Tag, { TagSingle } from "@tcgdex/sdk/interfaces/Tag"
 
 import Logger from '@dzeio/logger'
 import { objectKeys, objectSize } from '@dzeio/object-util'
-const logger = new Logger('Tags/Item')
+const logger = new Logger('tags/item')
 
 type tagCards = {
 	[key in Tag]?: Array<Card>
@@ -20,20 +20,19 @@ const endpoint = getBaseFolder(lang, "tags")
 
 
 export default async () => {
-	logger.log('part 1')
-	const list = getAllCards()
+	logger.log('Fetching cards')
+	const list = await getAllCards()
 	const arr: tagCards = {}
 	for (const i of list) {
-		const card = await fetchCardAsync(i)
+		const card: Card = (await import(i)).default
 
-		if (!isCardAvailable(card, lang) || !card.tags) continue
+		if (!(await isCardAvailable(card, lang)) || !card.tags) continue
 
 		for (const tag of card.tags) {
 			if (!(tag in arr)) arr[tag] = []
 			arr[tag].push(card)
 		}
 	}
-	logger.log('part 2')
 	for (const type in arr) {
 		if (arr.hasOwnProperty(type)) {
 			const cards: Array<Card> = arr[type];

@@ -1,21 +1,24 @@
-import { getAllCards2, getBaseFolder } from "..//util"
+import { getAllCards, getAllCards2, getBaseFolder } from "..//util"
 import Card from "@tcgdex/sdk/interfaces/Card"
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import { cardToCardSingle, isCardAvailable } from "../cardUtil"
+
+import Logger from '@dzeio/logger'
+const logger = new Logger('cards/item')
+
 
 const lang = process.env.CARDLANG as Langs || "en"
 
 const endpoint = getBaseFolder(lang, "cards")
 
 export default async () => {
-	console.log(endpoint)
-	const list = await getAllCards2()
+	logger.log('Fetching Cards')
+	const list = await getAllCards()
 	for (let el of list) {
-		el = el.replace("./", "../../")
-		const card: Card = require(el).default
+		const card: Card = (await import(el)).default
 
-		if (!isCardAvailable(card, lang)) continue
+		if (!(await isCardAvailable(card, lang))) continue
 
 		try {
 			await fs.mkdir(`${endpoint}/${encodeURI(card.id)}/`, {recursive: true})
@@ -26,5 +29,5 @@ export default async () => {
 
 		// if (if (typeof card.set.availability === "undefined"))
 	}
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

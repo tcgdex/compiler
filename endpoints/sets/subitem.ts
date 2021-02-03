@@ -1,14 +1,15 @@
-import { getBaseFolder, getAllSets } from "../util"
+import { getBaseFolder, getAllSets, getAllCards } from "../util"
 import Set from "@tcgdex/sdk/interfaces/Set"
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
-import { isSetAvailable } from "../setUtil"
+import { fetchSet, isSetAvailable } from "../setUtil"
 import { getAllCards2 } from "../util"
 import Card from "@tcgdex/sdk/interfaces/Card"
 import { cardToCardSingle, isCardAvailable } from "../cardUtil"
+import { getExpansionFromSetName } from "../expansionUtil"
 
-import { logger as console } from '@dzeio/logger'
-console.prefix = 'Sets/SubItem'
+import Logger from '@dzeio/logger'
+const logger = new Logger('sets/subitem')
 
 
 const lang = process.env.CARDLANG as Langs || "en"
@@ -16,27 +17,28 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "sets")
 
 export default async () => {
-	console.log(endpoint)
+	logger.log('Fetching Sets')
 	const list = await getAllSets()
 	for (let el of list) {
-		el = el.replace("./", "../../")
-		const set: Set = require(el).default
+		const expansion = (await getExpansionFromSetName(el))
+		const set: Set = await fetchSet(expansion.code, el)
 
 		if (!isSetAvailable(set, lang)) continue
 
-		const lit = await getAllCards2(set.code)
+		const lit = await getAllCards(set.code, set?.expansionCode ?? set.expansion.code)
+		logger.log('Fetching/Writing Cards for set', el)
 		for (let i of lit) {
-			i = i.replace("./", "../../")
-			const card: Card = require(i).default
+			const card: Card = (await import(i)).default
 
-			if (!isCardAvailable(card, lang)) continue
+			if (!(await isCardAvailable(card, lang))) continue
 
-			await fs.mkdir(`${endpoint}/${set.code}/${card.localId}`, {recursive: true})
-			await fs.writeFile(`${endpoint}/${set.code}/${card.localId}/index.json`, JSON.stringify(await cardToCardSingle(card, lang)))
+			const localId = card.localId === '?' ? '%3F' : card.localId
+
+			await fs.mkdir(`${endpoint}/${set.code}/${localId}`, {recursive: true})
+			await fs.writeFile(`${endpoint}/${set.code}/${localId}/index.json`, JSON.stringify(await cardToCardSingle(card, lang)))
 		}
 
 	}
 
-
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

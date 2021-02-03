@@ -9,21 +9,23 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "expansions")
 
+import Logger from '@dzeio/logger'
+const logger = new Logger('expansions/index')
 
 export default async () => {
-	console.log(endpoint)
-	const expansions = getAllExpansions()
+	logger.log('Fetching Expansions')
+	const expansions = await getAllExpansions()
 	let list: Array<{
 		release: string,
 		expansion: Expansion
 	}> = []
 	for (const i of expansions) {
 		const expansion: Expansion = require(`../../db/expansions/${i}`).default
-		const sets = getAllSets(expansion.code, true)
+		const sets = await getAllSets(expansion.code)
 		expansion.sets = sets
 		let oldestRelease = "9999-99-99"
 		for (const j of sets) {
-			const set = fetchSet(expansion.code, j)
+			const set = await fetchSet(expansion.code, j)
 			oldestRelease = set.releaseDate < oldestRelease ? set.releaseDate : oldestRelease
 		}
 		list.push({
@@ -41,5 +43,5 @@ export default async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

@@ -11,7 +11,7 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "tags")
 
 export default async () => {
-	logger.log(endpoint)
+	logger.log('Fetching Tags')
 
 	const list: Array<TagSimple> = []
 	for (const cat of Object.values(Tag)) {
@@ -29,5 +29,5 @@ export default async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
-	logger.log('ended ' + endpoint)
+	logger.log('Finished')
 }

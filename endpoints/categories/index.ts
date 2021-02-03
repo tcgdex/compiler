@@ -3,15 +3,16 @@ import Category, { CategorySimple, CategoryList } from '@tcgdex/sdk/interfaces/C
 import TranslationUtil from "@tcgdex/sdk/TranslationUtil"
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
+
 import Logger from '@dzeio/logger'
+const logger = new Logger('category/index')
 
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "categories")
 
-const logger = new Logger('Category/Index')
 
 export default async () => {
-	logger.log(endpoint)
+	logger.log('Fetching Categories')
 
 	const list: Array<CategorySimple> = []
 	for (const cat of Object.values(Category)) {
@@ -26,8 +27,9 @@ export default async () => {
 		count: list.length,
 		list: list
 	}
+	logger.log('Writing')
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
-	logger.log('ended')
+	logger.log('Finished')
 }

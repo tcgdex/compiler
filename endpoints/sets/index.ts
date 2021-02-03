@@ -3,10 +3,11 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import { SetSimple, SetList } from "@tcgdex/sdk/interfaces/Set"
 import { getAllSets, getBaseFolder } from "../util"
-import { isSetAvailable, setToSetSimple } from "../setUtil"
+import { fetchSet, isSetAvailable, setToSetSimple } from "../setUtil"
 
-import { logger as console } from '@dzeio/logger'
-console.prefix = 'Sets/Index'
+import Logger from '@dzeio/logger'
+import { getExpansionFromSetName } from "../expansionUtil"
+const logger = new Logger('sets/index')
 
 
 const lang = process.env.CARDLANG as Langs || "en"
@@ -14,19 +15,20 @@ const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "sets")
 
 export default async () => {
-	console.log(endpoint)
+	logger.log('Fetching sets')
 
 	const list = await getAllSets()
 	let items: Array<Set> = []
 	for (let el of list) {
-		el = el.replace("./", "../../")
-		const set: Set = require(el).default
+		const expansion = (await getExpansionFromSetName(el))
+		const set: Set = await fetchSet(expansion.code, el)
 
 		if (!isSetAvailable(set, lang)) continue
 		items.push(
 			set
 		)
 	}
+	logger.log('Procesing Sets')
 
 	items = items.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1)
 
@@ -40,5 +42,5 @@ export default async () => {
 	await fs.mkdir(`${endpoint}`, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(cardList))
 
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

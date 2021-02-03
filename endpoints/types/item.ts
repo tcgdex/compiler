@@ -6,9 +6,8 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import TranslationUtil from "@tcgdex/sdk/TranslationUtil"
 import { promises } from "fs"
 
-import { logger as console } from '@dzeio/logger'
-console.prefix = 'Types/Item'
-
+import Logger from '@dzeio/logger'
+const logger = new Logger('types/item')
 type typeCards = {
 	[key in Type]?: Array<Card>
 }
@@ -18,13 +17,13 @@ const endpoint = getBaseFolder(lang, "types")
 
 
 export default async () => {
-	console.log(endpoint)
-	const list = getAllCards()
+	logger.log('Fetching cards')
+	const list = await getAllCards()
 	const arr: typeCards = {}
 	for (const i of list) {
-		const card = await fetchCard(i)
+		const card: Card = (await import(i)).default
 
-		if (!isCardAvailable(card, lang) || !card.type) continue
+		if (!(await isCardAvailable(card, lang)) || !card.type) continue
 
 		for (const type of card.type) {
 			if (!(type in arr)) arr[type] = []
@@ -33,24 +32,26 @@ export default async () => {
 	}
 
 	for (const type in arr) {
-		if (arr.hasOwnProperty(type)) {
-			const cards: Array<Card> = arr[type];
-			const rType: Type = parseInt(type)
-			const toSave: TypeSingle = {
-				id: rType,
-				name: TranslationUtil.translate("type", rType, lang),
-				cards: await Promise.all(cards.map(el => cardToCardSimple(el, lang)))
-			}
-
-			const index = `${endpoint}/${toSave.id}`
-			const name = `${endpoint}/${urlize(toSave.name)}`
-
-			await promises.mkdir(index, {recursive: true})
-			await promises.mkdir(name, {recursive: true})
-
-			await promises.writeFile(`${index}/index.json`, JSON.stringify(toSave))
-			await promises.writeFile(`${name}/index.json`, JSON.stringify(toSave))
+		if (!Object.prototype.hasOwnProperty.call(arr, type)) {
+			continue
 		}
+		const cards: Array<Card> = arr[type];
+		const rType: Type = parseInt(type)
+		logger.log('Processing type', TranslationUtil.translate("type", rType, lang))
+		const toSave: TypeSingle = {
+			id: rType,
+			name: TranslationUtil.translate("type", rType, lang),
+			cards: await Promise.all(cards.map(el => cardToCardSimple(el, lang)))
+		}
+
+		const index = `${endpoint}/${toSave.id}`
+		const name = `${endpoint}/${urlize(toSave.name)}`
+
+		await promises.mkdir(index, {recursive: true})
+		await promises.mkdir(name, {recursive: true})
+
+		await promises.writeFile(`${index}/index.json`, JSON.stringify(toSave))
+		await promises.writeFile(`${name}/index.json`, JSON.stringify(toSave))
 	}
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

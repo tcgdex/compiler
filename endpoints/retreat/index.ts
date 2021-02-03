@@ -1,26 +1,25 @@
 import Card from "@tcgdex/sdk/interfaces/Card"
-import { getAllCards2, getBaseFolder } from "../util"
+import { getAllCards, getAllCards2, getBaseFolder } from "../util"
 import { promises as fs } from 'fs'
 import { isCardAvailable } from "../cardUtil"
 import { RetreatList } from '@tcgdex/sdk/interfaces/Retreat'
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 
-import { logger as console } from '@dzeio/logger'
-console.prefix = 'Retreat/Index'
+import Logger from '@dzeio/logger'
+const logger = new Logger('retreat/index')
 
 const lang = (process.env.CARDLANG || "en") as Langs
 const endpoint = getBaseFolder(lang, "retreat")
 
 export default async () => {
-	console.log(endpoint)
-	const files = await getAllCards2()
+	logger.log('Fetching Cards')
+	const files = await getAllCards()
 	const count: Array<number> = []
 	for (let file of files) {
-		file = file.replace("./", "../../")
-		const card: Card = await require(file).default
+		const card: Card = (await import(file)).default
 
 		if (
-			!isCardAvailable(card, lang) ||
+			!(await isCardAvailable(card, lang)) ||
 			!card.retreat ||
 			count.includes(card.retreat)
 		) continue
@@ -31,8 +30,9 @@ export default async () => {
 		count: count.length,
 		list: count
 	}
+	logger.log('Writingto file')
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(list))
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

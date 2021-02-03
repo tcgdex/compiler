@@ -5,7 +5,7 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { SetSimple, SetSingle } from "@tcgdex/sdk/interfaces/Set"
 import { cardToCardSimple } from "./cardUtil"
 import { CardSimple } from "@tcgdex/sdk/interfaces/Card"
-import { getAllCards2 } from "./util"
+import { getAllCards, getAllCards2, smartGlob } from "./util"
 
 interface t<T = Set> {
 	[key: string]: T
@@ -17,18 +17,18 @@ export function isSet(set: Set | {name: string, code: string}): set is Set {
 	return "releaseDate" in set
 }
 
-export function getSet(card: Card): Set {
+export async function getSet(card: Card): Promise<Set> {
 	if (!(card.set.code in setCache)) {
 		if (isSet(card.set)) setCache[card.set.code] = card.set
-		let setPath = glob.sync(`./db/sets/**/${card.set.code}.js`)[0]
+		let setPath = (await smartGlob(`./db/sets/**/${card.set.code}.js`))[0]
 		setPath = setPath.replace('./', '../')
 		setCache[card.set.code] = require(setPath).default
 	}
 	return setCache[card.set.code]
 }
 
-export function fetchSet(expansion: string, set: string): Set {
-	return require(`../db/sets/${expansion}/${set}.js`).default
+export async function fetchSet(expansion: string, set: string): Promise<Set> {
+	return (await import(`../db/sets/${expansion}/${set}.js`)).default
 }
 
 export function isSetAvailable(set: Set, lang: Langs) {
@@ -47,18 +47,21 @@ export function setToSetSimple(set: Set, lang: Langs): SetSimple {
 }
 
 export async function getSetCards(set: Set, lang: Langs): Promise<Array<CardSimple>> {
-	const cardes = getAllCards2(set.code)
+	const cardes = await getAllCards(set.code, set.expansionCode ?? set.expansion.code)
 	const cards: Array<Card> = []
 	for (let el of cardes) {
-		el = el.replace("./", "../")
-		const card: Card = require(el).default
+		el = el.replace("../../", "../")
+		const card: Card = (await import(el)).default
 
 		cards.push(
 			card
 		)
 	}
 	return await Promise.all(cards.sort((a, b) => {
-		if (!isNaN(parseInt(a.localId + "")) && !isNaN(parseInt(b.localId + ""))) {
+		if (
+			!isNaN(parseInt(a.localId + "")) &&
+			!isNaN(parseInt(b.localId + ""))
+		) {
 			return parseInt(a.localId + "") - parseInt(b.localId + "")
 		}
 		return a.localId > b.localId ? 1 : -1

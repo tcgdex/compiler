@@ -1,4 +1,4 @@
-import { getAllCards2 } from "../util"
+import { getAllCards, getAllCards2 } from "../util"
 import Card from "@tcgdex/sdk/interfaces/Card"
 
 import { promises as fs} from "fs"
@@ -10,10 +10,9 @@ export default async () => {
 	const db = await fetchIllustrators()
 
 
-	const list = getAllCards2()
+	const list = await getAllCards()
 	for (let i of list) {
-		i = i.replace("./", "../../")
-		const card: Card = require(i).default
+		const card: Card = (await import(i)).default
 
 		if (!card.illustrator) continue
 

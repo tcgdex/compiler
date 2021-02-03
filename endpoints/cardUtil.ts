@@ -22,7 +22,7 @@ type RemoteData = ObjectList<ObjectList<ObjectList<boolean>>>
 export async function cardToCardSimple(card: Card, lang: Langs): Promise<CardSimple> {
 	let image: string = undefined
 	const file: RemoteData = await fetchRemoteFile(`https://assets.tcgdex.net/data-${lang}.json`)
-	const expansion = getExpansionFromSetName(card.set.code)
+	const expansion = await getExpansionFromSetName(card.set.code)
 	if (file[expansion.code] && file[expansion.code][card.set.code] && file[expansion.code][card.set.code][card.localId]) {
 		const basePath = `https://assets.tcgdex.net/${lang}/${expansion.code}/${card.set.code}/${card.localId}`
 		image = `${basePath}/low`
@@ -36,10 +36,6 @@ export async function cardToCardSimple(card: Card, lang: Langs): Promise<CardSim
 	}
 }
 
-export function getCardExpansion(card: Card): Expansion {
-	return getExpansion(getSet(card))
-}
-
 export async function cardToCardSingle(card: Card, lang: Langs): Promise<CardSingle> {
 
 	let images: {
@@ -48,7 +44,7 @@ export async function cardToCardSingle(card: Card, lang: Langs): Promise<CardSin
 	} = undefined
 
 	const file: RemoteData = await fetchRemoteFile(`https://assets.tcgdex.net/data-${lang}.json`)
-	const expansion = getExpansionFromSetName(card.set.code)
+	const expansion = await getExpansionFromSetName(card.set.code)
 	if (file[expansion.code] && file[expansion.code][card.set.code] && file[expansion.code][card.set.code][card.localId]) {
 		const basePath = `https://assets.tcgdex.net/${lang}/${expansion.code}/${card.set.code}/${card.localId}`
 		images = {
@@ -70,7 +66,7 @@ export async function cardToCardSingle(card: Card, lang: Langs): Promise<CardSin
 
 		evolveFrom: card.evolveFrom && card.evolveFrom[lang],
 		evolveTo: card.evolveTo && card.evolveTo.map((el) => el[lang]),
-		tags: card.tags.map((el) => tagToTagSimple(el, lang)),
+		tags: card.tags?.map((el) => tagToTagSimple(el, lang)),
 		illustrator: card.illustrator && {
 			id: fetchIllustratorsSync().indexOf(card.illustrator),
 			name: card.illustrator,
@@ -101,9 +97,9 @@ export async function cardToCardSingle(card: Card, lang: Langs): Promise<CardSin
 	}
 }
 
-export function isCardAvailable(card: Card, lang: Langs): boolean {
+export async function isCardAvailable(card: Card, lang: Langs): Promise<boolean> {
 	if (!(lang in card.name)) return false
-	const set = getSet(card)
+	const set = await getSet(card)
 	if ("availability" in set && (lang in set.availability)) {
 		return set.availability[lang]
 	}

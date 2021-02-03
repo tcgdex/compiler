@@ -6,6 +6,9 @@ import Card from "@tcgdex/sdk/interfaces/Card"
 import { isCardAvailable, cardToCardSimple } from "../cardUtil"
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 
+import Logger from '@dzeio/logger'
+const logger = new Logger('illustrators/item')
+
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "illustrators")
 
@@ -14,18 +17,18 @@ interface t {
 }
 
 export default async () => {
-	console.log(endpoint)
+	logger.log('Fetching Illustrators/Cards')
 
 	const db = await fetchIllustrators()
-	const cards = getAllCards()
+	const cards = await getAllCards()
 
 	const tmp: t = {}
 
 
 	for (const i of cards) {
-		const card: Card = require(`../../db/cards/${i}`).default
+		const card: Card = (await import(i)).default
 
-		if (!isCardAvailable(card, lang) || !card.illustrator) continue
+		if (!(await isCardAvailable(card, lang)) || !card.illustrator) continue
 
 		if (!(card.illustrator in tmp)) tmp[card.illustrator] = []
 		tmp[card.illustrator].push(card)
@@ -33,6 +36,7 @@ export default async () => {
 
 	for (const illustrator in tmp) {
 		if (tmp.hasOwnProperty(illustrator)) {
+			logger.log('Processing illustrator', illustrator)
 			const list = tmp[illustrator];
 
 			const toSave: IllustratorSingle = {
@@ -45,5 +49,5 @@ export default async () => {
 			await fs.writeFile(`${endpoint}/${toSave.id}/index.json`, JSON.stringify(toSave))
 		}
 	}
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

@@ -3,41 +3,33 @@ import Set from "@tcgdex/sdk/interfaces/Set"
 import * as glob from 'glob'
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { ExpansionSingle } from "@tcgdex/sdk/interfaces/Expansion"
-import { getAllSets } from "./util"
+import { getAllSets, smartGlob } from "./util"
 import { setToSetSimple, fetchSet } from "./setUtil"
+import Logger from "@dzeio/logger"
+
+const logger = new Logger('ExpansionUtils')
 
 export function getExpansion(set: Set): Expansion {
 	if ("expansion" in set) return set.expansion
 	return require(`../../db/expansions/${set.expansionCode}`)
 }
 
-const setExpansionLink: Record<string, string> = {}
-
-export function getExpansionFromSetName(setName: string): Expansion {
+export async function getExpansionFromSetName(setName: string): Promise<Expansion> {
 	try {
-		if (!setExpansionLink[setName]) {
-			setExpansionLink[setName] = glob.sync(`./db/sets/**/${setName}.ts`)[0].split('/')[3]
-		}
-		const expansionName = setExpansionLink[setName]
+		const expansionName = (await smartGlob(`./db/sets/**/${setName}.js`))[0].split('/')[3].replace('.js', '')
 		return fetchExpansion(expansionName)
 	} catch (e) {
-		console.error(glob.sync(`./db/sets/**/${setName}`))
+		logger.error(e, setName)
 		throw new Error(setName)
 	}
 }
 
-export function getAllExpansions(): Array<string> {
-	return glob.sync("./db/expansions/*.ts").map(el => el.split('/')[3].substr(0, el.length-1-3)) // -15 = start -1 = 0 index -3 = .ts
+export async function getAllExpansions(): Promise<Array<string>> {
+	return (await smartGlob('./db/expansions/*.js')).map((it) => it.substring(it.lastIndexOf('/') + 1, it.length - 3)) // -15 = start -1 = 0 index -3 = .ts
 }
 
-const expansionCache: Record<string, Expansion> = {}
-
-export function fetchExpansion(name: string): Expansion {
-	name = name.replace('.ts', '')
-	if (!expansionCache[name]) {
-		expansionCache[name] = require(`../db/expansions/${name}.js`).default
-	}
-	return expansionCache[name]
+export async function fetchExpansion(name: string): Promise<Expansion> {
+	return (await import(`../db/expansions/${name}.js`)).default
 }
 
 export function expansionToExpansionSimple(expansion: Expansion, lang: Langs) {
@@ -47,10 +39,10 @@ export function expansionToExpansionSimple(expansion: Expansion, lang: Langs) {
 	}
 }
 
-export function expansionToExpansionSingle(expansion: Expansion, lang: Langs): ExpansionSingle {
-	const sets = getAllSets(expansion.code, true)
-		.map(el => fetchSet(expansion.code, el))
-		.sort((a, b) => {
+export async function expansionToExpansionSingle(expansion: Expansion, lang: Langs): Promise<ExpansionSingle> {
+	const setsTmp = await Promise.all((await getAllSets(expansion.code))
+		.map(el => fetchSet(expansion.code, el)))
+	const sets = setsTmp.sort((a, b) => {
 			return a.releaseDate > b.releaseDate ? 1 : -1
 		})
 		.map(el => setToSetSimple(el, lang))

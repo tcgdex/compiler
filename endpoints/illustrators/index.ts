@@ -3,11 +3,14 @@ import { IllustratorsList } from "@tcgdex/sdk/interfaces/Illustrator"
 import { getBaseFolder } from "../util"
 import { promises as fs} from "fs"
 
+import Logger from '@dzeio/logger'
+const logger = new Logger('illustrators/index')
+
 const lang = process.env.CARDLANG || "en"
 const endpoint = getBaseFolder(lang, "illustrators")
 
 export default async () => {
-	console.log(endpoint)
+	logger.log('Fetching illustrators')
 
 	const db = await fetchIllustrators()
 
@@ -18,5 +21,5 @@ export default async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }

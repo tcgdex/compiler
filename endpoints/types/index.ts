@@ -8,11 +8,11 @@ import { List } from "@tcgdex/sdk/interfaces/General"
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "types")
 
-import { logger as console } from '@dzeio/logger'
-console.prefix = 'Types/Index'
+import Logger from '@dzeio/logger'
+const logger = new Logger('types/index')
 
 export default async () => {
-	console.log(endpoint)
+	logger.log('Fetching types')
 	const typeArr: Array<TypeSimple> = []
 	for (const i of Object.values(Type)) {
 		if (typeof i !== "number") continue
@@ -27,7 +27,8 @@ export default async () => {
 		list: typeArr
 	}
 
+	logger.log('Writing types')
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(typeList))
-	console.log('ended ' + endpoint)
+	logger.log('Finished')
 }
