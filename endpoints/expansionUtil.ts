@@ -11,12 +11,33 @@ export function getExpansion(set: Set): Expansion {
 	return require(`../../db/expansions/${set.expansionCode}`)
 }
 
-export function getAllExpansions(): Array<string> {
-	return glob.sync("./db/expansions/*.ts").map(el => el.substr(16, el.length-15-1-3)) // -15 = start -1 = 0 index -3 = .ts
+const setExpansionLink: Record<string, string> = {}
+
+export function getExpansionFromSetName(setName: string): Expansion {
+	try {
+		if (!setExpansionLink[setName]) {
+			setExpansionLink[setName] = glob.sync(`./db/sets/**/${setName}.ts`)[0].split('/')[3]
+		}
+		const expansionName = setExpansionLink[setName]
+		return fetchExpansion(expansionName)
+	} catch (e) {
+		console.error(glob.sync(`./db/sets/**/${setName}`))
+		throw new Error(setName)
+	}
 }
 
+export function getAllExpansions(): Array<string> {
+	return glob.sync("./db/expansions/*.ts").map(el => el.split('/')[3].substr(0, el.length-1-3)) // -15 = start -1 = 0 index -3 = .ts
+}
+
+const expansionCache: Record<string, Expansion> = {}
+
 export function fetchExpansion(name: string): Expansion {
-	return require(`../db/expansions/${name}.js`).default
+	name = name.replace('.ts', '')
+	if (!expansionCache[name]) {
+		expansionCache[name] = require(`../db/expansions/${name}.js`).default
+	}
+	return expansionCache[name]
 }
 
 export function expansionToExpansionSimple(expansion: Expansion, lang: Langs) {

@@ -38,7 +38,7 @@ export default async () => {
 			const toSave: IllustratorSingle = {
 				id: db.indexOf(illustrator),
 				name: illustrator,
-				cards: list.map(el => cardToCardSimple(el, lang))
+				cards: await Promise.all(list.map(el => cardToCardSimple(el, lang)))
 			}
 
 			await fs.mkdir(`${endpoint}/${toSave.id}`, {recursive: true})

@@ -1,3 +1,6 @@
+import Logger from '@dzeio/logger'
+const logger = new Logger('Compiler')
+
 import cardIndex from './endpoints/cards/index'
 import cardItem from './endpoints/cards/item'
 
@@ -31,14 +34,18 @@ import typesItem from './endpoints/types/item'
 
 import tagsIndex from './endpoints/tags/index'
 import tagsItem from './endpoints/tags/item'
+import { fetchRemoteFile } from './endpoints/util'
 
 
 (async () => {
-	console.log('Preparing Database Update')
+	logger.log('Preparing Database Update')
 	await Promise.all([
-		illustratorsDB()
+		illustratorsDB(),
+		fetchRemoteFile('https://assets.tcgdex.net/data-en.json'),
+		fetchRemoteFile('https://assets.tcgdex.net/data-fr.json'),
+		fetchRemoteFile('https://assets.tcgdex.net/data-univ.json')
 	])
-	console.log('UPDATING...')
+	logger.log('UPDATING...')
 	await Promise.all([
 		cardIndex(),
 		cardItem(),
@@ -73,4 +80,5 @@ import tagsItem from './endpoints/tags/item'
 		tagsIndex(),
 		tagsItem(),
 	])
+	process.exit(0)
 })()

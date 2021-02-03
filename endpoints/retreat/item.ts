@@ -5,6 +5,9 @@ import { isCardAvailable, cardToCardSimple } from "../cardUtil"
 import { RetreatSingle } from '@tcgdex/sdk/interfaces/Retreat'
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Retreat/Item'
+
 const lang = (process.env.CARDLANG || "en") as Langs
 const endpoint = getBaseFolder(lang, "retreat")
 
@@ -30,7 +33,7 @@ export default async () => {
 
 			const item: RetreatSingle = {
 				id: retreat as unknown as number,
-				cards: cardArr.map((val) => cardToCardSimple(val, lang))
+				cards: await Promise.all(cardArr.map(el => cardToCardSimple(el, lang)))
 			}
 
 			await fs.mkdir(`${endpoint}/${item.id}`, {recursive: true})

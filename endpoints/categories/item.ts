@@ -37,7 +37,7 @@ export default async () => {
 			const toSave: CategorySingle = {
 				id: rCat,
 				name: TranslationUtil.translate("category", rCat, lang),
-				cards: cards.map(el => cardToCardSimple(el, lang))
+				cards: await Promise.all(cards.map(el => cardToCardSimple(el, lang)))
 			}
 
 			const index = `${endpoint}/${toSave.id}`

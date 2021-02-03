@@ -4,6 +4,9 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import { isSetAvailable, setToSetSingle } from "../setUtil"
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Sets/Item'
+
 const lang = process.env.CARDLANG as Langs || "en"
 
 const endpoint = getBaseFolder(lang, "sets")
@@ -18,7 +21,7 @@ export default async () => {
 		if (!isSetAvailable(set, lang)) continue
 
 		await fs.mkdir(`${endpoint}/${set.code}/`, {recursive: true})
-		await fs.writeFile(`${endpoint}/${set.code}/index.json`, JSON.stringify(setToSetSingle(set, lang)))
+		await fs.writeFile(`${endpoint}/${set.code}/index.json`, JSON.stringify(await setToSetSingle(set, lang)))
 	}
 
 

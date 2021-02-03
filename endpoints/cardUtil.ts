@@ -6,18 +6,33 @@ import { tagToTagSimple } from "./TagUtil";
 import Category from "@tcgdex/sdk/interfaces/Category";
 import { attackToAttackSingle } from "./attackUtil";
 import { abilityToAbilitySingle } from "./abilityUtil";
-import { getExpansion } from "./expansionUtil";
+import { getExpansion, getExpansionFromSetName } from "./expansionUtil";
 import { getSet } from "./setUtil";
 import Expansion from "@tcgdex/sdk/interfaces/Expansion";
 import { fetchIllustratorsSync } from "./illustratorUtil";
 import TranslationUtil from "@tcgdex/sdk/TranslationUtil";
+import { fetchRemoteFile } from "./util";
 
-export function cardToCardSimple(card: Card, lang: Langs): CardSimple {
+interface ObjectList<T = any> {
+	[key: string]: T
+}
+
+type RemoteData = ObjectList<ObjectList<ObjectList<boolean>>>
+
+export async function cardToCardSimple(card: Card, lang: Langs): Promise<CardSimple> {
+	let image: string = undefined
+	const file: RemoteData = await fetchRemoteFile(`https://assets.tcgdex.net/data-${lang}.json`)
+	const expansion = getExpansionFromSetName(card.set.code)
+	if (file[expansion.code] && file[expansion.code][card.set.code] && file[expansion.code][card.set.code][card.localId]) {
+		const basePath = `https://assets.tcgdex.net/${lang}/${expansion.code}/${card.set.code}/${card.localId}`
+		image = `${basePath}/low`
+	}
+
 	return {
 		id: card.id,
 		localId: card.localId,
 		name: card.name[lang],
-		image: card.image && card.image.low[lang]
+		image
 	}
 }
 
@@ -25,14 +40,21 @@ export function getCardExpansion(card: Card): Expansion {
 	return getExpansion(getSet(card))
 }
 
-export function cardToCardSingle(card: Card, lang: Langs): CardSingle {
+export async function cardToCardSingle(card: Card, lang: Langs): Promise<CardSingle> {
 
-	const images: {
-		low: string,
-		high?: string
-	} = card.image && {
-		low: card.image.low[lang],
-		high: card.image.high && card.image.high[lang]
+	let images: {
+		low: string;
+		high?: string;
+	} = undefined
+
+	const file: RemoteData = await fetchRemoteFile(`https://assets.tcgdex.net/data-${lang}.json`)
+	const expansion = getExpansionFromSetName(card.set.code)
+	if (file[expansion.code] && file[expansion.code][card.set.code] && file[expansion.code][card.set.code][card.localId]) {
+		const basePath = `https://assets.tcgdex.net/${lang}/${expansion.code}/${card.set.code}/${card.localId}`
+		images = {
+			low: `${basePath}/low`,
+			high: `${basePath}/high`
+		}
 	}
 
 	return {

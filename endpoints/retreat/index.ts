@@ -5,6 +5,9 @@ import { isCardAvailable } from "../cardUtil"
 import { RetreatList } from '@tcgdex/sdk/interfaces/Retreat'
 import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Retreat/Index'
+
 const lang = (process.env.CARDLANG || "en") as Langs
 const endpoint = getBaseFolder(lang, "retreat")
 

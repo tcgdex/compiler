@@ -1,5 +1,6 @@
 import { promises as fs, promises } from 'fs'
 import * as glob from 'glob'
+import fetch from 'node-fetch'
 
 const VERSION = 'v1'
 
@@ -67,4 +68,19 @@ export async function del(path: string) {
 export function urlize(str: string): string {
 	str = str.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
 	return str.replace(/ /g, "-").toLowerCase()
+}
+
+interface fileCacheInterface {
+	[key: string]: any
+}
+const fileCache: fileCacheInterface = {}
+
+export async function fetchRemoteFile<T = any>(url: string): Promise<T> {
+	// console.log(Object.keys(fileCache))
+	if (!fileCache[url]) {
+		const resp = await fetch(url)
+		// console.log(await resp.text(), url)
+		fileCache[url] = resp.json()
+	}
+	return fileCache[url]
 }

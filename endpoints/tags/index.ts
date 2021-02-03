@@ -4,11 +4,14 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import Tag, { TagSimple, TagList } from "@tcgdex/sdk/interfaces/Tag"
 
+import Logger from '@dzeio/logger'
+const logger = new Logger('Tags/Index')
+
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "tags")
 
 export default async () => {
-	console.log(endpoint)
+	logger.log(endpoint)
 
 	const list: Array<TagSimple> = []
 	for (const cat of Object.values(Tag)) {
@@ -26,5 +29,5 @@ export default async () => {
 
 	await fs.mkdir(endpoint, {recursive: true})
 	await fs.writeFile(`${endpoint}/index.json`, JSON.stringify(res))
-	console.log('ended ' + endpoint)
+	logger.log('ended ' + endpoint)
 }

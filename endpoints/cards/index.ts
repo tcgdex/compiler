@@ -19,7 +19,7 @@ export default async () => {
 
 		if (!isCardAvailable(card, lang)) continue
 		items.push(
-			cardToCardSimple(card, lang)
+			await cardToCardSimple(card, lang)
 		)
 
 		// if (if (typeof card.set.availability === "undefined"))

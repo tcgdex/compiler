@@ -1,7 +1,7 @@
 [submodule "db"]
 	path = db
-	url = https://git.delta-wings.net/tcgdex/db.git
+	url = https://github.com/tcgdex/cards-database.git
 
 [submodule "dist"]
 	path = dist
-	url = https://git.delta-wings.net/tcgdex/compiled.git
+	url = https://github.com/tcgdex/distribution.git

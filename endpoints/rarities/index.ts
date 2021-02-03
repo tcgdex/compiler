@@ -4,6 +4,10 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import { promises as fs } from 'fs'
 import Rarity, { RaritySimple, RarityList } from "@tcgdex/sdk/interfaces/Rarity"
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Rarities/Index'
+
+
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "rarities")
 

@@ -31,7 +31,7 @@ export default async () => {
 
 			const toSave: HpSingle = {
 				hp: hp as unknown as number,
-				cards: cards.map(el => cardToCardSimple(el, lang))
+				cards: await Promise.all(cards.map(el => cardToCardSimple(el, lang)))
 			}
 
 			await fs.mkdir(`${endpoint}/${toSave.hp}/`, {recursive: true})

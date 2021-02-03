@@ -7,6 +7,10 @@ import { getAllCards2 } from "../util"
 import Card from "@tcgdex/sdk/interfaces/Card"
 import { cardToCardSingle, isCardAvailable } from "../cardUtil"
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Sets/SubItem'
+
+
 const lang = process.env.CARDLANG as Langs || "en"
 
 const endpoint = getBaseFolder(lang, "sets")
@@ -28,7 +32,7 @@ export default async () => {
 			if (!isCardAvailable(card, lang)) continue
 
 			await fs.mkdir(`${endpoint}/${set.code}/${card.localId}`, {recursive: true})
-			await fs.writeFile(`${endpoint}/${set.code}/${card.localId}/index.json`, JSON.stringify(cardToCardSingle(card, lang)))
+			await fs.writeFile(`${endpoint}/${set.code}/${card.localId}/index.json`, JSON.stringify(await cardToCardSingle(card, lang)))
 		}
 
 	}

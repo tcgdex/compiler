@@ -46,7 +46,7 @@ export function setToSetSimple(set: Set, lang: Langs): SetSimple {
 	}
 }
 
-export function getSetCards(set: Set, lang: Langs): Array<CardSimple> {
+export async function getSetCards(set: Set, lang: Langs): Promise<Array<CardSimple>> {
 	const cardes = getAllCards2(set.code)
 	const cards: Array<Card> = []
 	for (let el of cardes) {
@@ -57,16 +57,15 @@ export function getSetCards(set: Set, lang: Langs): Array<CardSimple> {
 			card
 		)
 	}
-
-	return cards.sort((a, b) => {
+	return await Promise.all(cards.sort((a, b) => {
 		if (!isNaN(parseInt(a.localId + "")) && !isNaN(parseInt(b.localId + ""))) {
 			return parseInt(a.localId + "") - parseInt(b.localId + "")
 		}
 		return a.localId > b.localId ? 1 : -1
-	}).map(el => cardToCardSimple(el, lang))
+	}).map(el => cardToCardSimple(el, lang)))
 }
 
-export function setToSetSingle(set: Set, lang: Langs): SetSingle {
+export async function setToSetSingle(set: Set, lang: Langs): Promise<SetSingle> {
 	return {
 		name: set.name[lang],
 		code: set.code,
@@ -85,6 +84,6 @@ export function setToSetSingle(set: Set, lang: Langs): SetSingle {
 			symbol: set.images.symbol,
 			logo: set.images.logo
 		},
-		list: getSetCards(set, lang)
+		list: await getSetCards(set, lang)
 	}
 }

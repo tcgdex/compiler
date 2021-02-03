@@ -5,6 +5,10 @@ import { SetSimple, SetList } from "@tcgdex/sdk/interfaces/Set"
 import { getAllSets, getBaseFolder } from "../util"
 import { isSetAvailable, setToSetSimple } from "../setUtil"
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Sets/Index'
+
+
 const lang = process.env.CARDLANG as Langs || "en"
 
 const endpoint = getBaseFolder(lang, "sets")

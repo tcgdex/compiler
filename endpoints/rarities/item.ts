@@ -6,6 +6,10 @@ import TranslationUtil from "@tcgdex/sdk/TranslationUtil"
 import { promises } from "fs"
 import Rarity, { RaritySingle } from "@tcgdex/sdk/interfaces/Rarity"
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Rarities/Item'
+
+
 type rarityCards = {
 	[key in Rarity]?: Array<Card>
 }
@@ -37,7 +41,7 @@ export default async () => {
 			const toSave: RaritySingle = {
 				id: rCat,
 				name: TranslationUtil.translate("rarity", rCat, lang),
-				cards: cards.map(el => cardToCardSimple(el, lang))
+				cards: await Promise.all(cards.map(el => cardToCardSimple(el, lang)))
 			}
 
 			const index = `${endpoint}/${toSave.id}`

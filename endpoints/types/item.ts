@@ -6,6 +6,9 @@ import { Langs } from "@tcgdex/sdk/interfaces/LangList"
 import TranslationUtil from "@tcgdex/sdk/TranslationUtil"
 import { promises } from "fs"
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Types/Item'
+
 type typeCards = {
 	[key in Type]?: Array<Card>
 }
@@ -36,7 +39,7 @@ export default async () => {
 			const toSave: TypeSingle = {
 				id: rType,
 				name: TranslationUtil.translate("type", rType, lang),
-				cards: cards.map(el => cardToCardSimple(el, lang))
+				cards: await Promise.all(cards.map(el => cardToCardSimple(el, lang)))
 			}
 
 			const index = `${endpoint}/${toSave.id}`

@@ -17,8 +17,12 @@ export default async () => {
 
 		if (!isCardAvailable(card, lang)) continue
 
-		await fs.mkdir(`${endpoint}/${card.id}/`, {recursive: true})
-		await fs.writeFile(`${endpoint}/${card.id}/index.json`, JSON.stringify(cardToCardSingle(card, lang)))
+		try {
+			await fs.mkdir(`${endpoint}/${encodeURI(card.id)}/`, {recursive: true})
+			await fs.writeFile(`${endpoint}/${encodeURI(card.id)}/index.json`, JSON.stringify(await cardToCardSingle(card, lang)))
+		} catch {
+
+		}
 
 		// if (if (typeof card.set.availability === "undefined"))
 	}

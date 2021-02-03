@@ -8,6 +8,9 @@ import { List } from "@tcgdex/sdk/interfaces/General"
 const lang = process.env.CARDLANG as Langs || "en"
 const endpoint = getBaseFolder(lang, "types")
 
+import { logger as console } from '@dzeio/logger'
+console.prefix = 'Types/Index'
+
 export default async () => {
 	console.log(endpoint)
 	const typeArr: Array<TypeSimple> = []
