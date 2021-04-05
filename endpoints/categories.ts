@@ -1,11 +1,8 @@
-import { CardList, Card as CardSingle, StringEndpointList, StringEndpoint } from '@tcgdex/sdk/interfaces'
+import { StringEndpointList, StringEndpoint } from '@tcgdex/sdk/interfaces'
+import translate from '../utils/translationUtil'
 import { Card, Languages } from '../db/interfaces'
 import { Endpoint } from '../interfaces'
-import Logger from '@dzeio/logger'
-import { cardToCardSimple, cardToCardSingle, getCards } from '../utils/cardUtil'
-import { basename } from 'path'
-
-const logger = new Logger(basename(__filename))
+import { cardToCardSimple, getCards } from '../utils/cardUtil'
 
 export default class implements Endpoint<StringEndpointList, StringEndpoint, {}, Record<string, Array<[string, Card]>>> {
 	public constructor(
@@ -30,8 +27,8 @@ export default class implements Endpoint<StringEndpointList, StringEndpoint, {},
 	}
 
 	public async common() {
-		return (await getCards()).reduce((p, c) => {
-			const category = c[1].category
+		return (await getCards(this.lang)).reduce((p, c) => {
+			const category = translate('category', c[1].category, this.lang)
 			if (!category) return p
 			if (!p[category]) {
 				p[category] = []

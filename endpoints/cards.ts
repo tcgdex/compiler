@@ -1,11 +1,7 @@
 import { CardList, Card as CardSingle } from '@tcgdex/sdk/interfaces'
 import { Card, Languages } from '../db/interfaces'
 import { Endpoint } from '../interfaces'
-import Logger from '@dzeio/logger'
 import { cardToCardSimple, cardToCardSingle, getCards } from '../utils/cardUtil'
-import { basename } from 'path'
-
-const logger = new Logger(basename(__filename))
 
 export default class implements Endpoint<CardList, CardSingle, {}, Array<[string, Card]>> {
 	public constructor(
@@ -25,6 +21,6 @@ export default class implements Endpoint<CardList, CardSingle, {}, Array<[string
 	}
 
 	public async common() {
-		return getCards()
+		return getCards(this.lang)
 	}
 }

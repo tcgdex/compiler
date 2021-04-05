@@ -76,6 +76,6 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 		// 	symbol: set.images.symbol,
 		// 	logo: set.images.logo
 		// },
-		cards: await Promise.all((await getCards(set)).map(([id, card]) => cardToCardSimple(id, card, lang)))
+		cards: await Promise.all((await getCards(lang, set)).map(([id, card]) => cardToCardSimple(id, card, lang)))
 	}
 }

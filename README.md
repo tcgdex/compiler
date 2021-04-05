@@ -1,6 +1,8 @@
-# TCGdex/Compile
+# TCGdex/Compiler
 
-_The Compiler for the TCGdex Database_
+_The Compiler for the [TCGdex Database](https://github.com/tcgdex/cards-database)_
+
+# V2 Changes
 
 ## Endpoints Made
 
@@ -14,7 +16,7 @@ _The Compiler for the TCGdex Database_
 - `sets`
 - `types`
 
-## Endpoints TODO list
+## Endpoints coming during V2 life
 
 - `abilities`
 - `abilities-type`

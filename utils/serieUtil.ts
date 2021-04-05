@@ -1,10 +1,7 @@
 import { smartGlob } from "./util"
 import { setToSetSimple, getSets } from "./setUtil"
-import Logger from "@dzeio/logger"
 import { Serie, SupportedLanguages } from 'db/interfaces'
 import { Serie as SerieSingle, SerieResume } from '@tcgdex/sdk/interfaces'
-
-const logger = new Logger('ExpansionUtils')
 
 export async function getSeries(): Promise<Array<Serie>> {
 	return Promise.all((await smartGlob('./db/data/*.js'))

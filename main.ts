@@ -1,10 +1,13 @@
 import { SupportedLanguages } from 'db/interfaces'
 import { Endpoint } from 'interfaces'
 import { promises as fs} from 'fs'
-import { objectLoop, objectMap } from '@dzeio/object-util'
-import { getCardPictures } from './utils/cardUtil'
-import { urlize } from './utils/util'
-const lang: SupportedLanguages = 'en'
+import { objectMap } from '@dzeio/object-util'
+import { urlize, fetchRemoteFile } from './utils/util'
+import { config } from 'dotenv'
+
+config()
+
+const lang: SupportedLanguages = process.env.TCGDEX_COMPILER_LANG as SupportedLanguages ?? 'en'
 
 const VERSION = 'v2'
 
@@ -12,8 +15,7 @@ const VERSION = 'v2'
 	const paths = (await fs.readdir('./endpoints')).filter((f) => f.endsWith('.ts'))
 
 	console.log('Prefetching pictures')
-	await getCardPictures('1', (await import('./db/data/Base/Base Set/1.js')).default, lang)
-
+	await fetchRemoteFile(`https://assets.tcgdex.net/data-${lang}.json`)
 
 	for (const file of paths) {
 		const path = `./endpoints/${file}`
@@ -31,8 +33,7 @@ const VERSION = 'v2'
 		await fs.writeFile(`${folder}/index.json`, JSON.stringify(
 			await endpoint.index(common)
 		))
-		console.log(file, 'Finished Index')
-		console.log(file, 'Running Item')
+		console.log(file, 'Finished Index', 'Running Item')
 		const item = await endpoint.item(common)
 		console.log(file, 'Finished Item')
 		if (item) {

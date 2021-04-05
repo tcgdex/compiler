@@ -2,11 +2,7 @@ import { SetList, Set as SetSingle, Card as CardSingle } from '@tcgdex/sdk/inter
 import { getSet, getSets, isSetAvailable, setToSetSimple, setToSetSingle } from "../utils/setUtil"
 import { Languages, Set } from '../db/interfaces'
 import { Endpoint } from '../interfaces'
-import Logger from '@dzeio/logger'
 import { cardToCardSingle, getCards } from '../utils/cardUtil'
-import { basename } from 'path'
-
-const logger = new Logger(basename(__filename))
 
 export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<Set>> {
 	public constructor(
@@ -41,11 +37,11 @@ export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<S
 	}
 
 	public async sub(common: Array<Set>, item: string) {
-		const set = await getSet(item)
+		const set = common.find((s) => s.name[this.lang] === item)
 
-		if (!isSetAvailable(set, this.lang)) return undefined
+		if (!set || !isSetAvailable(set, this.lang)) return undefined
 
-		const lit = await getCards(set)
+		const lit = await getCards(this.lang, set)
 		const l: Record<string, CardSingle> = {}
 		for (let i of lit) {
 			l[i[0]] = await cardToCardSingle(i[0], i[1], this.lang)

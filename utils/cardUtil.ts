@@ -1,8 +1,8 @@
-import { getSet, setToSetSimple } from "./setUtil"
+import { setToSetSimple } from "./setUtil"
 import { fetchRemoteFile, smartGlob } from "./util"
-import { Set, SupportedLanguages, Card } from 'db/interfaces'
-import fetch from 'node-fetch'
+import { Set, SupportedLanguages, Card, Types } from 'db/interfaces'
 import { Card as CardSingle, CardResume } from '@tcgdex/sdk/interfaces'
+import translate, { translateType } from './translationUtil'
 
 interface ObjectList<T = any> {
 	[key: string]: T
@@ -53,8 +53,8 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 		image: image,
 
 		illustrator: card.illustrator,
-		rarity: card.rarity, // translate
-		category: card.category, // translate
+		rarity: translate('rarity', card.rarity, lang) as any,
+		category: translate('category', card.category, lang) as any,
 		variants: {
 			normal: typeof card.variants?.normal === 'boolean' ? card.variants.normal : typeof card.set.variants?.normal === 'boolean' ? card.set.variants.normal : true,
 			reverse: typeof card.variants?.reverse === 'boolean' ? card.variants.reverse : typeof card.set.variants?.reverse === 'boolean' ? card.set.variants.reverse : true,
@@ -66,38 +66,38 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 
 		dexId: card.dexId,
 		hp: card.hp,
-		types: card.types, // translate
+		types: card.types?.map((t) => translateType(t, lang)) as Array<Types>,
 		evolveFrom: card.evolveFrom && card.evolveFrom[lang],
 		weight: card.weight,
 		description: card.description ? card.description[lang] as string : undefined,
 		level: card.level,
-		stage: card.stage, // translate
-		suffix: card.suffix, // translate
+		stage: translate('stage', card.stage, lang) as any,
+		suffix: translate('suffix', card.suffix, lang) as any,
 		item: card.item ? {
 			name: card.item.name[lang] as string,
 			effect: card.item.effect[lang] as string
 		} : undefined,
 
 		abilities: card.abilities?.map((el) => ({
-			type: el.type, // translate
+			type: translate('abilityType', el.type, lang) as any,
 			name: el.name[lang] as string,
 			effect: el.effect[lang] as string
 		})),
 
 		attacks: card.attacks?.map((el) => ({
-			cost: el.cost,
+			cost: el.cost?.map((t) => translateType(t, lang)) as Types[],
 			name: el.name[lang] as string,
 			effect: el.effect ? el.effect[lang] : undefined,
 			damage: el.damage
 		})),
 
 		weaknesses: card.weaknesses?.map((el) => ({
-			type: el.type, // translate
+			type: translate('types', el.type, lang) as Types,
 			value: el.value
 		})),
 
 		resistances: card.resistances?.map((el) => ({
-			type: el.type, // translate
+			type: translate('types', el.type, lang) as Types,
 			value: el.value
 		})),
 
@@ -105,8 +105,8 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 
 		effect: card.effect ? card.effect[lang] : undefined,
 
-		trainerType: card.trainerType, // translate
-		energyType: card.energyType // translate
+		trainerType: translate('trainerType', card.trainerType, lang) as any,
+		energyType: translate('energyType', card.energyType, lang) as any
 	}
 }
 
@@ -120,7 +120,7 @@ export async function getCard(serie: string, setName: string, id: string): Promi
 	return (await import(`../db/data/${serie}/${setName}/${id}.js`)).default
 }
 
-export async function getCards(set?: Set): Promise<Array<[string, Card]>> {
+export async function getCards(lang: SupportedLanguages,set?: Set): Promise<Array<[string, Card]>> {
 	const cards = (await smartGlob(`./db/data/${(set && set.serie.name.en) ?? '*'}/${(set && set.name.en) ?? '*'}/*.js`))
 	const list: Array<[string, Card]> = []
 	for (const path of cards) {
@@ -135,7 +135,7 @@ export async function getCards(set?: Set): Promise<Array<[string, Card]>> {
 		})()
 		console.log(path, id, setName)
 		const c = await getCard(serieName, setName, id)
-		if (!c.name.en) {
+		if (!c.name[lang]) {
 			continue
 		}
 		list.push([id, c])

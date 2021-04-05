@@ -1,12 +1,7 @@
-import { Serie as SerieSingle, StringEndpoint, SerieList } from '@tcgdex/sdk/interfaces'
-import { Card, Languages, Serie } from '../db/interfaces'
+import { Serie as SerieSingle, SerieList } from '@tcgdex/sdk/interfaces'
+import { Languages, Serie } from '../db/interfaces'
 import { Endpoint } from '../interfaces'
-import Logger from '@dzeio/logger'
-import { cardToCardSimple, cardToCardSingle, getCards } from '../utils/cardUtil'
-import { basename } from 'path'
 import { getSeries, serieToSerieSimple, serieToSerieSingle } from '../utils/serieUtil'
-
-const logger = new Logger(basename(__filename))
 
 export default class implements Endpoint<SerieList, SerieSingle, {}, Array<Serie>> {
 	public constructor(
@@ -21,7 +16,12 @@ export default class implements Endpoint<SerieList, SerieSingle, {}, Array<Serie
 		const items: Record<string, SerieSingle> = {}
 		for (let key = 0; key < common.length; key++) {
 			const val = common[key];
-			items[key] = await serieToSerieSingle(val, this.lang)
+			const gen = await serieToSerieSingle(val, this.lang)
+			const name = val.name[this.lang]
+			if (name) {
+				items[name] = gen
+			}
+			items[key] = gen
 		}
 		return items
 	}

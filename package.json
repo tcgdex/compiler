@@ -2,14 +2,15 @@
 	"name": "@tcgdex/compiler",
 	"version": "1.0.0",
 	"main": "index.js",
-	"repository": "git@git.delta-wings.net:tcgdex/compiler.git",
+	"repository": "https://github.com/tcgdex/compiler.git",
 	"author": "Avior <florian.bouillon@delta-wings.net>",
 	"license": "MIT",
 	"private": false,
 	"scripts": {
 		"db:compile": "cd db && tsc --project tsconfig.json",
 		"db:test": "cd db && tsc --noEmit --project tsconfig.json",
-		"gen": "ts-node --transpile-only all.ts"
+		"start": "ts-node --transpile-only main.ts",
+		"upload": "ts-node --transpile-only upload.ts"
 	},
 	"dependencies": {
 		"@dzeio/logger": "^2.0.0-alpha.0",
@@ -19,8 +20,7 @@
 		"dotenv": "^8.2.0",
 		"glob": "^7.1.6",
 		"node-fetch": "^2.6.0",
-		"ssh2": "^0.8.9",
-		"ssh2-sftp-client": "^6.0.1"
+		"ssh2": "^0.8.9"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
