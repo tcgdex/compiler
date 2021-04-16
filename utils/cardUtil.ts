@@ -4,11 +4,9 @@ import { Set, SupportedLanguages, Card, Types } from 'db/interfaces'
 import { Card as CardSingle, CardResume } from '@tcgdex/sdk/interfaces'
 import translate, { translateType } from './translationUtil'
 
-interface ObjectList<T = any> {
-	[key: string]: T
-}
+type ObjectList<T = any> = Partial<Record<string, T>>
 
-type RemoteData = ObjectList<ObjectList<ObjectList<boolean>>>
+type RemoteData = ObjectList<ObjectList<ObjectList<ObjectList<string>>>>
 
 export async function cardToCardSimple(id: string, card: Card, lang: SupportedLanguages): Promise<CardResume> {
 	const cardName = card.name[lang]
@@ -26,8 +24,9 @@ export async function cardToCardSimple(id: string, card: Card, lang: SupportedLa
 
 export async function getCardPictures(cardId: string, card: Card, lang: SupportedLanguages): Promise<string | undefined> {
 	try {
-		const file = await fetchRemoteFile(`https://assets.tcgdex.net/data-${lang}.json`)
-		if (file[card.set.serie.id][card.set.id][cardId]) {
+		const file = await fetchRemoteFile(`https://assets.tcgdex.net/datas.json`)
+		const fileExists = !!file[lang]?.[card.set.serie.code]?.[card.set.code]?.[card.localId]
+		if (fileExists) {
 			return `https://assets.tcgdex.net/${lang}/${card.set.serie.id}/${card.set.id}/${cardId}`
 		}
 	} catch {
@@ -42,9 +41,6 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 	if (!card.name[lang]) {
 		throw new Error(`Card (${localId}) dont exist in (${lang})`)
 	}
-
-
-
 
 	return {
 		id: `${card.set.id}-${localId}`,
