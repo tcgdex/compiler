@@ -25,7 +25,7 @@ export async function cardToCardSimple(id: string, card: Card, lang: SupportedLa
 export async function getCardPictures(cardId: string, card: Card, lang: SupportedLanguages): Promise<string | undefined> {
 	try {
 		const file = await fetchRemoteFile(`https://assets.tcgdex.net/datas.json`)
-		const fileExists = !!file[lang]?.[card.set.serie.code]?.[card.set.code]?.[card.localId]
+		const fileExists = !!file[lang]?.[card.set.serie.id]?.[card.set.id]?.[cardId]
 		if (fileExists) {
 			return `https://assets.tcgdex.net/${lang}/${card.set.serie.id}/${card.set.id}/${cardId}`
 		}
