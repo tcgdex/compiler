@@ -18,30 +18,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Compile & Upload
       uses: actions/setup-node@v2
       with:
         node-version: 14.x
-    
-    - name: Pull & Install
     - run: git pull --recurse-submodules=yes
     - run: yarn db:compile
-
-    - name: Compile & Upload
     - run: TCGDEX_COMPILER_LANG=en yarn start
     - run: TCGDEX_COMPILER_LANG=fr yarn start
     - run: yarn upload
+    - run: git config --local user.email "bot@tcgdex.net"
+    - run: git config --local user.name "TCGdex [bot]"
+    - run: cd dist && git commit -m "Updated Database" -a && cd ../
       env:
         UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
         UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
         UPLOAD_USERNAME: ${{ secrets.UPLOAD_USERNAME }}
         UPLOAD_PASSWORD: ${{ secrets.UPLOAD_PASSWORD }}
-
-    - name: Commit changes
-    - run: git config --local user.email "bot@tcgdex.net"
-    - run: git config --local user.name "TCGdex [bot]"
-    - run: cd dist && git commit -m "Updated Database" -a && cd ../
-
     - name: Push changes
     - uses: ad-m/github-push-action@master
     - with:
