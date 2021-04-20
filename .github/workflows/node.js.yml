@@ -27,7 +27,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: git pull --recursive-submodules=yes
+    - run: git pull --recurse-submodules=yes
     - run: yarn
     - run: TCGDEX_COMPILER_LANG=en yarn start
     - run: TCGDEX_COMPILER_LANG=fr yarn start
