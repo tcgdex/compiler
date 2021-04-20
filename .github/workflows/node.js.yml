@@ -28,11 +28,11 @@ jobs:
 
     - name: Pull Distribution
       working-directory: ./dist
-      run: git pull
+      run: git pull --rebase
 
     - name: Compile Database
       working-directory: ./db
-      run: git pull && yarn && yarn compile
+      run: git pull --rebase && yarn && yarn compile
       
     - name: Build
       working-directory: ./
