@@ -30,10 +30,10 @@ jobs:
         cd ../
 
     - name: Compile Database
-      run: yarn db:compile
+      run: cd db && yarn && yarn compile && cd ../
       
     - name: Build
-      run: yarn start && TCGDEX_COMPILER_LANG=fr yarn start
+      run: yarn && yarn start && TCGDEX_COMPILER_LANG=fr yarn start
       
     - name: Upload
       run: yarn upload
