@@ -29,7 +29,7 @@ jobs:
 
     - name: Compile Database
       working-directory: ./db
-      run: git pull && yarn && yarn compile
+      run: git pull && yarn && cat package.json && yarn compile
       
     - name: Build
       working-directory: ./
