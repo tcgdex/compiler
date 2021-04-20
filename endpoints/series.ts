@@ -21,7 +21,7 @@ export default class implements Endpoint<SerieList, SerieSingle, {}, Array<Serie
 			if (name) {
 				items[name] = gen
 			}
-			items[key] = gen
+			items[val.id] = gen
 		}
 		return items
 	}
