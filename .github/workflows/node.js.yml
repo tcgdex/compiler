@@ -16,21 +16,34 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 14.x
+    
+    - name: Pull & Install
     - run: git pull --recurse-submodules=yes
-    - run: yarn
+    - run: yarn db:compile
+
+    - name: Compile & Upload
     - run: TCGDEX_COMPILER_LANG=en yarn start
     - run: TCGDEX_COMPILER_LANG=fr yarn start
-    - run: cd dist && git commit -m "Updated Database"
-    - run: git push --recursive-submodules=on-demand
     - run: yarn upload
+      env:
+        UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
+        UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
+        UPLOAD_USERNAME: ${{ secrets.UPLOAD_USERNAME }}
+        UPLOAD_PASSWORD: ${{ secrets.UPLOAD_PASSWORD }}
+
+    - name: Commit changes
+    - run: git config --local user.email "bot@tcgdex.net"
+    - run: git config --local user.name "TCGdex [bot]"
+    - run: cd dist && git commit -m "Updated Database" -a && cd ../
+
+    - name: Push changes
+    - uses: ad-m/github-push-action@master
+    - with:
+        github_token: ${{ secrets.UPLOAD_TOKEN }}
+        directory: './dist'
