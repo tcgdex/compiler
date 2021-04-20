@@ -22,14 +22,17 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '14.x'
+    - name: Ceck Folder
+      working-directory: ./
+      run: ls
 
     - name: Pull Distribution
-      working-directory: ./db
-      run: git pull
+      working-directory: ./dist
+      run: git pull && ls
 
     - name: Compile Database
       working-directory: ./db
-      run: git pull && yarn && pwd && yarn compile
+      run: git pull && yarn && ls && yarn compile
       
     - name: Build
       working-directory: ./
