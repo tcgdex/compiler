@@ -24,7 +24,10 @@ jobs:
         node-version: '14.x'
 
     - name: Pull submodules
-      run: git pull --recurse-submodules=yes
+      run: |
+        cd db && git pull
+        cd ../dist && git pull
+        cd ../
 
     - name: Compile Database
       run: yarn db:compile
