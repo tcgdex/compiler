@@ -5,7 +5,9 @@ name: Compile & Push
 
 on:
   push:
-    branches: [ master, Aviortheking-patch-1 ]
+    branches:
+      - master
+  pull_request:
   workflow_dispatch:
   repository_dispatch:
     types:
@@ -18,7 +20,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        submodules: true
+        persist-credentials: false
+
+    
+    - uses: actions/checkout@v2
+      with:
+        repository: tcgdex/card-database
+        path: ./db
+        persist-credentials: false
+
+    - uses: actions/checkout@v2
+      with:
+        repository: tcgdex/distribution
+        path: ./dist
         persist-credentials: false
     
     - name: Setup NodeJS
