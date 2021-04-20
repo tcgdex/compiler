@@ -58,7 +58,7 @@ jobs:
         git config --local user.email "bot@tcgdex.net"
         git config --local user.name "TCGdex [bot]"
         git add .
-        git commit -m "Updated Database" -a
+        git commit -m "Updated Database"
 
     - name: Push changes
       uses: ad-m/github-push-action@master
