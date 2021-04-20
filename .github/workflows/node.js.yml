@@ -40,13 +40,9 @@ jobs:
       with:
         node-version: '14.x'
 
-    - name: Pull Distribution
-      working-directory: ./dist
-      run: git pull --rebase
-
     - name: Compile Database
       working-directory: ./db
-      run: git pull --rebase && yarn && yarn compile
+      run: yarn && yarn compile
       
     - name: Build
       working-directory: ./
