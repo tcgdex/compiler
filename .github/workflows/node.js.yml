@@ -25,9 +25,13 @@ jobs:
       with:
         node-version: '14.x'
 
+    - name: Pull Distribution
+      working-directory: ./dist
+      run: git pull
+
     - name: Compile Database
       working-directory: ./db
-      run: yarn && ls && yarn compile
+      run: git pull && yarn && yarn compile
       
     - name: Build
       working-directory: ./
@@ -50,5 +54,5 @@ jobs:
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.UPLOAD_TOKEN }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         directory: './dist'
