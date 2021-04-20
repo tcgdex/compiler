@@ -23,26 +23,27 @@ jobs:
       with:
         node-version: '14.x'
 
-    - name: Pull submodules
-      run: |
-        cd db && git pull
-        cd ../dist && git pull
-        cd ../
+    - name: Pull Distribution
+      working-directory: ./db
+      run: git pull
 
     - name: Compile Database
-      run: cd db && yarn && yarn compile && cd ../
+      working-directory: ./db
+      run: git pull && yarn && yarn compile
       
     - name: Build
+      working-directory: ./
       run: yarn && yarn start && TCGDEX_COMPILER_LANG=fr yarn start
       
     - name: Upload
       run: yarn upload
     
     - name: Commit Changes
+      working-directory: ./dist
       run: |
         git config --local user.email "bot@tcgdex.net"
         git config --local user.name "TCGdex [bot]"
-        cd dist && git commit -m "Updated Database" -a && cd ../
+        git commit -m "Updated Database" -a
       env:
         UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
         UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
