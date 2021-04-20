@@ -19,6 +19,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true
+        persist-credentials: false
     
     - name: Setup NodeJS
       uses: actions/setup-node@v2
@@ -36,14 +37,6 @@ jobs:
     - name: Build
       working-directory: ./
       run: yarn && yarn start && TCGDEX_COMPILER_LANG=fr yarn start
-      
-    - name: Upload
-      run: yarn upload
-      env:
-        UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
-        UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
-        UPLOAD_USERNAME: ${{ secrets.UPLOAD_USERNAME }}
-        UPLOAD_PASSWORD: ${{ secrets.UPLOAD_PASSWORD }}
 
     - name: Commit Changes
       working-directory: ./dist
@@ -58,3 +51,11 @@ jobs:
         github_token: ${{ secrets.PUSH_TOKEN }}
         directory: ./dist
         repository: tcgdex/distribution
+        
+    - name: Upload
+      run: yarn upload
+      env:
+        UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
+        UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
+        UPLOAD_USERNAME: ${{ secrets.UPLOAD_USERNAME }}
+        UPLOAD_PASSWORD: ${{ secrets.UPLOAD_PASSWORD }}
