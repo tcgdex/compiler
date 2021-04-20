@@ -17,6 +17,8 @@ const VERSION = 'v2'
 	console.log('Prefetching pictures')
 	await fetchRemoteFile(`https://assets.tcgdex.net/datas.json`)
 
+	await fs.rm(`./dist/${VERSION}/${lang}`, {recursive: true, force: true})
+
 	console.log('Let\'s GO !')
 	for (const file of paths) {
 		const path = `./endpoints/${file}`
