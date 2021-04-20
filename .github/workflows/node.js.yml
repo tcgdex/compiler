@@ -5,7 +5,7 @@ name: Compile & Push
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, Aviortheking-patch-1 ]
   workflow_dispatch:
   repository_dispatch:
     types:
@@ -17,6 +17,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
+        persist-credentials: false
     
     - name: Setup NodeJS
       uses: actions/setup-node@v2
@@ -24,33 +27,35 @@ jobs:
         node-version: '14.x'
 
     - name: Pull Distribution
-      working-directory: ./db
+      working-directory: ./dist
       run: git pull
 
     - name: Compile Database
       working-directory: ./db
-      run: git pull && yarn && cat package.json && yarn compile
+      run: git pull && yarn && yarn compile
       
     - name: Build
       working-directory: ./
       run: yarn && yarn start && TCGDEX_COMPILER_LANG=fr yarn start
-      
-    - name: Upload
-      run: yarn upload
-    
+
     - name: Commit Changes
       working-directory: ./dist
       run: |
         git config --local user.email "bot@tcgdex.net"
         git config --local user.name "TCGdex [bot]"
         git commit -m "Updated Database" -a
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.PUSH_TOKEN }}
+        directory: ./dist
+        repository: tcgdex/distribution
+        
+    - name: Upload
+      run: yarn upload
       env:
         UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
         UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
         UPLOAD_USERNAME: ${{ secrets.UPLOAD_USERNAME }}
         UPLOAD_PASSWORD: ${{ secrets.UPLOAD_PASSWORD }}
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.UPLOAD_TOKEN }}
-        directory: './dist'
