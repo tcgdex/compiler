@@ -5,7 +5,9 @@ name: Compile & Push
 
 on:
   push:
-    branches: [ master, Aviortheking-patch-1 ]
+    branches:
+      - master
+  pull_request:
   workflow_dispatch:
   repository_dispatch:
     types:
@@ -18,7 +20,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        submodules: true
+        persist-credentials: false
+
+    
+    - uses: actions/checkout@v2
+      with:
+        repository: tcgdex/cards-database
+        path: ./db
+        persist-credentials: false
+
+    - uses: actions/checkout@v2
+      with:
+        repository: tcgdex/distribution
+        path: ./dist
         persist-credentials: false
     
     - name: Setup NodeJS
@@ -26,13 +40,9 @@ jobs:
       with:
         node-version: '14.x'
 
-    - name: Pull Distribution
-      working-directory: ./dist
-      run: git pull --rebase
-
     - name: Compile Database
       working-directory: ./db
-      run: git pull --rebase && yarn && yarn compile
+      run: yarn && yarn compile
       
     - name: Build
       working-directory: ./
@@ -43,7 +53,8 @@ jobs:
       run: |
         git config --local user.email "bot@tcgdex.net"
         git config --local user.name "TCGdex [bot]"
-        git commit -m "Updated Database" -a
+        git add .
+        git commit -m "Updated Database"
 
     - name: Push changes
       uses: ad-m/github-push-action@master
