@@ -39,21 +39,22 @@ jobs:
       
     - name: Upload
       run: yarn upload
-    
+      env:
+        UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
+        UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
+        UPLOAD_USERNAME: ${{ secrets.UPLOAD_USERNAME }}
+        UPLOAD_PASSWORD: ${{ secrets.UPLOAD_PASSWORD }}
+
     - name: Commit Changes
       working-directory: ./dist
       run: |
         git config --local user.email "bot@tcgdex.net"
         git config --local user.name "TCGdex [bot]"
         git commit -m "Updated Database" -a
-      env:
-        UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
-        UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
-        UPLOAD_USERNAME: ${{ secrets.UPLOAD_USERNAME }}
-        UPLOAD_PASSWORD: ${{ secrets.UPLOAD_PASSWORD }}
+
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.UPLOAD_TOKEN }}
+        github_token: ${{ secrets.PUSH_TOKEN }}
         directory: ./dist
         repository: tcgdex/distribution
