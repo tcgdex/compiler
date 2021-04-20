@@ -1,5 +1,5 @@
 import { Set, SupportedLanguages } from "db/interfaces"
-import { smartGlob } from "./util"
+import { fetchRemoteFile, smartGlob } from "./util"
 import { cardToCardSimple, getCards } from './cardUtil'
 import { SetResume, Set as SetSingle } from '@tcgdex/sdk/interfaces'
 
@@ -41,11 +41,26 @@ export function isSetAvailable(set: Set, lang: SupportedLanguages) {
 	return lang in set.name
 }
 
+export async function getSetPictures(set: Set, lang: SupportedLanguages): Promise<[string | undefined, string | undefined]> {
+	try {
+		const file = await fetchRemoteFile(`https://assets.tcgdex.net/datas.json`)
+		const logoExists = !!file[lang]?.[set.serie.id]?.[set.id]?.logo ? `https://assets.tcgdex.net/${lang}/${set.serie.id}/${set.id}/logo` : undefined
+		const symbolExists = !!file.univ?.[set.serie.id]?.[set.id]?.symbol ? `https://assets.tcgdex.net/univ/${set.serie.id}/${set.id}/symbol` : undefined
+		return [
+			logoExists,
+			symbolExists
+		]
+	} catch {
+		return [undefined, undefined]
+	}
+}
+
 export async function setToSetSimple(set: Set, lang: SupportedLanguages): Promise<SetResume> {
+	const pics = await getSetPictures(set, lang)
 	return {
 		id: set.id,
-		// logo: set.images && set.images.logo,
-		// symbol: set.images && set.images.symbol,
+		logo: pics[0],
+		symbol: pics[1],
 		name: set.name[lang] as string,
 		cardCount: {
 			total: set.cardCount.total,
@@ -55,6 +70,7 @@ export async function setToSetSimple(set: Set, lang: SupportedLanguages): Promis
 }
 
 export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promise<SetSingle> {
+	const pics = await getSetPictures(set, lang)
 	return {
 		name: set.name[lang] as string,
 		id: set.id,
@@ -72,10 +88,8 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 			standard: set.legal.standard,
 			expanded: set.legal.expanded
 		},
-		// images: set.images && {
-		// 	symbol: set.images.symbol,
-		// 	logo: set.images.logo
-		// },
+		logo: pics[0],
+		symbol: pics[1],
 		cards: await Promise.all((await getCards(lang, set)).map(([id, card]) => cardToCardSimple(id, card, lang)))
 	}
 }
