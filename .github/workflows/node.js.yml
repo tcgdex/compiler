@@ -5,10 +5,7 @@ name: Compile & Push
 
 on:
   push:
-    branches:
-      - master
   pull_request:
-  workflow_dispatch:
   repository_dispatch:
     types:
       - webhook
@@ -22,7 +19,7 @@ jobs:
       with:
         persist-credentials: false
 
-    
+
     - uses: actions/checkout@v2
       with:
         repository: tcgdex/cards-database
@@ -34,7 +31,7 @@ jobs:
         repository: tcgdex/distribution
         path: ./dist
         persist-credentials: false
-    
+
     - name: Setup NodeJS
       uses: actions/setup-node@v2
       with:
@@ -43,13 +40,14 @@ jobs:
     - name: Compile Database
       working-directory: ./db
       run: yarn && yarn compile
-      
+
     - name: Build
       working-directory: ./
       run: yarn && yarn start && TCGDEX_COMPILER_LANG=fr yarn start
 
     - name: Commit Changes
       working-directory: ./dist
+      if: ${{ (github.event_name == 'push' && github.ref == 'refs/head/master') || github.event_name == 'repository_dispatch' }}
       run: |
         git config --local user.email "bot@tcgdex.net"
         git config --local user.name "TCGdex [bot]"
@@ -58,13 +56,15 @@ jobs:
 
     - name: Push changes
       uses: ad-m/github-push-action@master
+      if: ${{ (github.event_name == 'push' && github.ref == 'refs/head/master') || github.event_name == 'repository_dispatch' }}
       with:
         github_token: ${{ secrets.PUSH_TOKEN }}
         directory: ./dist
         repository: tcgdex/distribution
-        
+
     - name: Upload
       run: yarn upload
+      if: ${{ (github.event_name == 'push' && github.ref == 'refs/head/master') || github.event_name == 'repository_dispatch' }}
       env:
         UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
         UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
