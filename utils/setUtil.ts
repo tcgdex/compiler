@@ -12,17 +12,17 @@ const setCache: t = {}
 // Dont use cache as it wont necessary have them all
 export async function getSets(serie = '*'): Promise<Array<Set>> {
 	const sets = (await smartGlob(`./db/data/${serie}/*.js`)).map((set) => set.substring(set.lastIndexOf('/')+1, set.lastIndexOf('.')))
-	return Promise.all(sets.map((set) => getSet(set)))
+	return Promise.all(sets.map((set) => getSet(set, serie)))
 }
 
 /**
  * Return the set
  * @param name the name of the set (don't include.js/.ts)
  */
-export async function getSet(name: string): Promise<Set> {
+export async function getSet(name: string, serie = '*'): Promise<Set> {
 	if (!setCache[name]) {
 		try {
-			const [path] = await smartGlob(`./db/data/*/${name}.js`)
+			const [path] = await smartGlob(`./db/data/${serie}/${name}.js`)
 			setCache[name] = (await import(path.replace('./', '../'))).default
 		} catch (e) {
 			const set = (await getSets()).find((s) => s.id === name)

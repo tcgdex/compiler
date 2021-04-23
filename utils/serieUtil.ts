@@ -1,12 +1,16 @@
 import { smartGlob } from "./util"
 import { setToSetSimple, getSets } from "./setUtil"
-import { Serie, SupportedLanguages } from 'db/interfaces'
+import { Serie, SupportedLanguages, Set } from 'db/interfaces'
 import { Serie as SerieSingle, SerieResume } from '@tcgdex/sdk/interfaces'
 
 export async function getSeries(): Promise<Array<Serie>> {
-	return Promise.all((await smartGlob('./db/data/*.js'))
+	const series = await Promise.all((await smartGlob('./db/data/*.js'))
 		.map((it) => it.substring(it.lastIndexOf('/') + 1, it.length - 3))
 		.map((it) => getSerie(it)))
+	const tmp: Array<[Serie, Set]> = await Promise.all(series.map( async (it) => {
+		return [it, (await getSets(it.name.en)).reduce<Set | undefined>((p, c) => p ? p.releaseDate < c.releaseDate ? p : c : c, undefined) as Set] as [Serie, Set]
+	}))
+	return tmp.sort((a, b) => a[1].releaseDate > b[1].releaseDate ? 1 : -1).map((it) => it[0])
 }
 
 export async function getSerie(name: string): Promise<Serie> {
