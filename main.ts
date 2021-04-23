@@ -36,14 +36,13 @@ const VERSION = 'v2'
 		await fs.writeFile(`${folder}/index.json`, JSON.stringify(
 			await endpoint.index(common)
 		))
-		console.log(file, 'Finished Index', 'Running Item')
+		console.log(file, 'Finished Index')
+		console.log(file, 'Running Item')
 		const item = await endpoint.item(common)
-		console.log(file, 'Finished Item')
 		if (item) {
 			for (const key of Object.keys(item)) {
 				const val = item[key]
 				const subFolder = `${folder}/${urlize(key)}`
-				console.log(subFolder)
 				await fs.mkdir(subFolder, {recursive: true})
 				await fs.writeFile(`${subFolder}/index.json`, JSON.stringify(val))
 				if (endpoint.sub) {
@@ -59,6 +58,9 @@ const VERSION = 'v2'
 					console.log(file, 'Finished subItem', key)
 				}
 			}
+			console.log(file, 'Finished Item')
+		} else {
+			console.log(file, 'skipped Item')
 		}
 	}
 })()

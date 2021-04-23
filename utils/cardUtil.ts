@@ -129,7 +129,7 @@ export async function getCards(lang: SupportedLanguages,set?: Set): Promise<Arra
 			const part1 = path.substr(0, path.lastIndexOf(setName) - 1)
 			return part1.substr(part1.lastIndexOf('/') + 1)
 		})()
-		console.log(path, id, setName)
+		// console.log(path, id, setName)
 		const c = await getCard(serieName, setName, id)
 		if (!c.name[lang]) {
 			continue
