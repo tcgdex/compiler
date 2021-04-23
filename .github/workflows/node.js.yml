@@ -45,6 +45,11 @@ jobs:
       working-directory: ./
       run: yarn && yarn start && TCGDEX_COMPILER_LANG=fr yarn start
 
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
     - name: Commit Changes
       working-directory: ./dist
       if: ${{ (github.event_name == 'push' && github.ref == 'refs/head/master') || github.event_name == 'repository_dispatch' }}
