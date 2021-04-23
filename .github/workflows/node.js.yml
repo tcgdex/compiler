@@ -1,0 +1,72 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Compile & Push
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - webhook
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+
+    
+    - uses: actions/checkout@v2
+      with:
+        repository: tcgdex/cards-database
+        path: ./db
+        persist-credentials: false
+
+    - uses: actions/checkout@v2
+      with:
+        repository: tcgdex/distribution
+        path: ./dist
+        persist-credentials: false
+    
+    - name: Setup NodeJS
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
+
+    - name: Compile Database
+      working-directory: ./db
+      run: yarn && yarn compile
+      
+    - name: Build
+      working-directory: ./
+      run: yarn && yarn start && TCGDEX_COMPILER_LANG=fr yarn start
+
+    - name: Commit Changes
+      working-directory: ./dist
+      run: |
+        git config --local user.email "bot@tcgdex.net"
+        git config --local user.name "TCGdex [bot]"
+        git add .
+        git commit -m "Updated Database"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.PUSH_TOKEN }}
+        directory: ./dist
+        repository: tcgdex/distribution
+        
+    - name: Upload
+      run: yarn upload
+      env:
+        UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
+        UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
+        UPLOAD_USERNAME: ${{ secrets.UPLOAD_USERNAME }}
+        UPLOAD_PASSWORD: ${{ secrets.UPLOAD_PASSWORD }}
