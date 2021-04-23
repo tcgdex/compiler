@@ -5,6 +5,8 @@ name: Compile TCGdex
 
 on:
   push:
+    branches:
+      - master
   pull_request:
   repository_dispatch:
     types:
@@ -47,7 +49,7 @@ jobs:
 
     - name: Commit Changes
       working-directory: ./dist
-      if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'repository_dispatch' }}
+      if: ${{ (github.event_name == 'push') || github.event_name == 'repository_dispatch' }}
       run: |
         git config --local user.email "bot@tcgdex.net"
         git config --local user.name "TCGdex [bot]"
@@ -56,7 +58,7 @@ jobs:
 
     - name: Push changes
       uses: ad-m/github-push-action@master
-      if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'repository_dispatch' }}
+      if: ${{ (github.event_name == 'push') || github.event_name == 'repository_dispatch' }}
       with:
         github_token: ${{ secrets.PUSH_TOKEN }}
         directory: ./dist
@@ -64,7 +66,7 @@ jobs:
 
     - name: Upload
       run: yarn upload
-      if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'repository_dispatch' }}
+      if: ${{ (github.event_name == 'push') || github.event_name == 'repository_dispatch' }}
       env:
         UPLOAD_REMOTE: ${{ secrets.UPLOAD_REMOTE }}
         UPLOAD_DIST: ${{ secrets.UPLOAD_DIST }}
