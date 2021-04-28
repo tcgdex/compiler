@@ -4,7 +4,7 @@ _The Compiler for the [TCGdex Database](https://github.com/tcgdex/cards-database
 
 # V2 Changes
 
-## Endpoints Made
+## Endpoints changes
 
 - `cards`
 - `categories`

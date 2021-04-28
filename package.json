@@ -1,9 +1,8 @@
 {
 	"name": "@tcgdex/compiler",
-	"version": "1.0.0",
-	"main": "index.js",
+	"version": "2.0.0",
 	"repository": "https://github.com/tcgdex/compiler.git",
-	"author": "Avior <florian.bouillon@delta-wings.net>",
+	"author": "Avior <florian@avior.me>",
 	"license": "MIT",
 	"private": false,
 	"scripts": {
@@ -17,16 +16,14 @@
 		"@dzeio/object-util": "^1.0.4",
 		"@dzeio/queue": "^1.2.0",
 		"@tcgdex/sdk": "^2.0.0-alpha.3",
+		"@types/glob": "^7.1.1",
+		"@types/node": "^15.0.1",
+		"@types/node-fetch": "^2.5.7",
+		"@types/ssh2": "^0.5.46",
 		"dotenv": "^8.2.0",
 		"glob": "^7.1.6",
 		"node-fetch": "^2.6.0",
-		"ssh2": "^0.8.9"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.1",
-		"@types/node": "^14.14.33",
-		"@types/node-fetch": "^2.5.7",
-		"@types/ssh2": "^0.5.46",
+		"ssh2": "^0.8.9",
 		"ts-node": "^9.1.1",
 		"typescript": "^4.2.3"
 	}
