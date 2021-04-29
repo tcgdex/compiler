@@ -2,7 +2,7 @@ import { setToSetSimple } from "./setUtil"
 import { fetchRemoteFile, smartGlob } from "./util"
 import { Set, SupportedLanguages, Card, Types } from 'db/interfaces'
 import { Card as CardSingle, CardResume } from '@tcgdex/sdk/interfaces'
-import translate, { translateType } from './translationUtil'
+import translate from './translationUtil'
 
 type ObjectList<T = any> = Partial<Record<string, T>>
 
@@ -62,7 +62,7 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 
 		dexId: card.dexId,
 		hp: card.hp,
-		types: card.types?.map((t) => translateType(t, lang)) as Array<Types>,
+		types: card.types?.map((t) => translate('types', t, lang)) as Array<Types>,
 		evolveFrom: card.evolveFrom && card.evolveFrom[lang],
 		weight: card.weight,
 		description: card.description ? card.description[lang] as string : undefined,
@@ -81,7 +81,7 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 		})),
 
 		attacks: card.attacks?.map((el) => ({
-			cost: el.cost?.map((t) => translateType(t, lang)) as Types[],
+			cost: el.cost?.map((t) => translate('types', t, lang)) as Types[],
 			name: el.name[lang] as string,
 			effect: el.effect ? el.effect[lang] : undefined,
 			damage: el.damage

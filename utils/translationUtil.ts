@@ -1,4 +1,4 @@
-import { SupportedLanguages, Types } from 'db/interfaces'
+import { SupportedLanguages } from 'db/interfaces'
 
 type translatable = 'types' | 'rarity' | 'stage' | 'category' | 'suffix' | 'abilityType' | 'trainerType' | 'energyType'
 
@@ -85,17 +85,4 @@ export default function translate(item: translatable, key: string | undefined, l
 		throw new Error(`Could not find translation for ${lang}${item}.${key}`);
 	}
 	return res
-}
-
-export function translateType(type: Types, lang: SupportedLanguages) {
-	return translate('types', type, lang)
-
-}
-
-export function translateStage(stage: string, lang: SupportedLanguages) {
-	return translate('stage', stage, lang)
-}
-
-export function translateRarity(rarity: string, lang: SupportedLanguages) {
-	return translate('rarity', rarity, lang)
 }
