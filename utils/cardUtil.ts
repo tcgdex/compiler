@@ -136,7 +136,15 @@ export async function getCards(lang: SupportedLanguages,set?: Set): Promise<Arra
 		}
 		list.push([id, c])
 	}
-	// console.log(list[0], list[0][0])
-	// process.exit(0)
-	return list
+
+	// Sort by id when possible
+	return list.sort(([a], [b]) => {
+		const ra = parseInt(a)
+		const rb = parseInt(b)
+		if (!isNaN(ra) && !isNaN(rb)) {
+			return ra - rb
+		} else {
+			return a >= b ? 1 : -1
+		}
+	})
 }
