@@ -2,7 +2,7 @@ import glob from 'glob'
 import fetch from 'node-fetch'
 
 export function urlize(str: string): string {
-	return str.replace('?', '%3F').normalize('NFD').replace(/["'\u0300-\u036f]/g, "")
+	return str.replace('?', '%3F').normalize('NFC').replace(/["'\u0300-\u036f]/g, "")
 }
 
 interface fileCacheInterface {
