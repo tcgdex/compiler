@@ -19,10 +19,10 @@
   resolved "https://registry.yarnpkg.com/@dzeio/queue/-/queue-1.2.0.tgz#cc61133f182f4b15267f974c63a7a9e4591365f5"
   integrity sha512-YCDgMy41bYH7Rn5nIuH5T3W30Up69LhVqKm5IbK0ybjqyf90Sb9qeRpyqbtG+CV6kQnakhpkcr8ZqtRQWCVtrQ==
 
-"@tcgdex/sdk@^2.0.0-alpha.3":
-  version "2.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@tcgdex/sdk/-/sdk-2.0.0-beta.3.tgz#07d439830f39478f1b42731ff39794bb0a8767ef"
-  integrity sha512-KaDmKBovcrTJlKjhtum1KE/+7lTvRuN6QEixhpuy8KS58udHKlLCY+od+Wn3gfYZTRxNzgbShDKIbQ5nMD8Faw==
+"@tcgdex/sdk@^2.0.0-beta.4":
+  version "2.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@tcgdex/sdk/-/sdk-2.0.0-beta.4.tgz#dc3fdab6a20fcbc314955c9fb04c3d8d5963d78b"
+  integrity sha512-iTtjf0Xb8Nj8i6NNit3jB/L+jrIZyIqm1C63I0YW+sGWlUdpuq4yDdgyyiscCCP6gRdlh8nsNwN6KkkYGXVDYg==
   dependencies:
     isomorphic-unfetch "^3.1.0"
 

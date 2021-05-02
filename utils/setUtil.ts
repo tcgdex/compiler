@@ -70,6 +70,7 @@ export async function setToSetSimple(set: Set, lang: SupportedLanguages): Promis
 }
 
 export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promise<SetSingle> {
+	const cards = await getCards(lang, set)
 	const pics = await getSetPictures(set, lang)
 	return {
 		name: set.name[lang] as string,
@@ -81,7 +82,11 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 		tcgOnline: set.tcgOnline,
 		cardCount: {
 			total: set.cardCount.total,
-			official: set.cardCount.official
+			official: set.cardCount.official,
+			normal: cards.reduce((count, card) => count + (card[1].variants?.normal ?? set.variants?.normal ? 1 : 0), 0),
+			reverse: cards.reduce((count, card) => count + (card[1].variants?.reverse ?? set.variants?.reverse ? 1 : 0), 0),
+			holo: cards.reduce((count, card) => count + (card[1].variants?.holo ?? set.variants?.holo ? 1 : 0), 0),
+			firstEd: cards.reduce((count, card) => count + (card[1].variants?.firstEdition ?? set.variants?.firstEdition ? 1 : 0), 0),
 		},
 		releaseDate: set.releaseDate,
 		legal: set.legal && {
@@ -90,6 +95,6 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 		},
 		logo: pics[0],
 		symbol: pics[1],
-		cards: await Promise.all((await getCards(lang, set)).map(([id, card]) => cardToCardSimple(id, card, lang)))
+		cards: await Promise.all(cards.map(([id, card]) => cardToCardSimple(id, card, lang)))
 	}
 }

@@ -15,7 +15,7 @@
 		"@dzeio/logger": "^2.0.0-alpha.0",
 		"@dzeio/object-util": "^1.0.4",
 		"@dzeio/queue": "^1.2.0",
-		"@tcgdex/sdk": "^2.0.0-alpha.3",
+		"@tcgdex/sdk": "^2.0.0-beta.4",
 		"@types/glob": "^7.1.1",
 		"@types/node": "^15.0.1",
 		"@types/node-fetch": "^2.5.7",
