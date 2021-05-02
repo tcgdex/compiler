@@ -32,8 +32,7 @@ export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<S
 	}
 
 	public async common() {
-		return (await getSets())
-			.filter((set) => isSetAvailable(set, this.lang))
+		return (await getSets(undefined, this.lang))
 	}
 
 	public async sub(common: Array<Set>, item: string) {

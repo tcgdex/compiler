@@ -27,6 +27,6 @@ export default class implements Endpoint<SerieList, SerieSingle, {}, Array<Serie
 	}
 
 	public async common() {
-		return getSeries()
+		return getSeries(this.lang)
 	}
 }

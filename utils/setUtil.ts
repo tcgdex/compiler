@@ -10,22 +10,31 @@ interface t {
 const setCache: t = {}
 
 // Dont use cache as it wont necessary have them all
-export async function getSets(serie = '*'): Promise<Array<Set>> {
-	const sets = (await smartGlob(`./db/data/${serie}/*.js`)).map((set) => set.substring(set.lastIndexOf('/')+1, set.lastIndexOf('.')))
-	return Promise.all(sets.map((set) => getSet(set, serie)))
+export async function getSets(serie = '*', lang: SupportedLanguages): Promise<Array<Set>> {
+	// list sets names
+	const rawSets = (await smartGlob(`./db/data/${serie}/*.js`)).map((set) => set.substring(set.lastIndexOf('/')+1, set.lastIndexOf('.')))
+	// Fetch sets
+	const sets = (await Promise.all(rawSets.map((set) => getSet(set, serie, lang))))
+		// Filter sets
+		.filter((set) => isSetAvailable(set, lang))
+		// Sort sets by release date
+		.sort((a, b) => {
+			return a.releaseDate > b.releaseDate ? 1 : -1
+		})
+	return sets
 }
 
 /**
  * Return the set
  * @param name the name of the set (don't include.js/.ts)
  */
-export async function getSet(name: string, serie = '*'): Promise<Set> {
+export async function getSet(name: string, serie = '*', lang: SupportedLanguages): Promise<Set> {
 	if (!setCache[name]) {
 		try {
 			const [path] = await smartGlob(`./db/data/${serie}/${name}.js`)
 			setCache[name] = (await import(path.replace('./', '../'))).default
 		} catch (e) {
-			const set = (await getSets()).find((s) => s.id === name)
+			const set = (await getSets(undefined, lang)).find((s) => s.id === name)
 			if (set) {
 				return set
 			}
