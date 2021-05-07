@@ -4,6 +4,8 @@
 name: Compile TCGdex
 
 on:
+  # Run manually
+  workflow_dispatch:
   # Run on Webhook
   repository_dispatch:
   # Run when a push is made on master
