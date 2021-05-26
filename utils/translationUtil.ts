@@ -9,7 +9,7 @@ const translations: Record<string, Record<translatable, Record<string, string>>>
 			'Darkness': 'Obscurité',
 			'Dragon': 'Dragon',
 			'Fairy': 'Fée',
-			'Fightning': 'Combat',
+			'Fighting': 'Combat',
 			'Fire': 'Feu',
 			'Grass': 'Plante',
 			'Lightning': 'Électrique',
