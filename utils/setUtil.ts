@@ -65,6 +65,7 @@ export async function getSetPictures(set: Set, lang: SupportedLanguages): Promis
 }
 
 export async function setToSetSimple(set: Set, lang: SupportedLanguages): Promise<SetResume> {
+	const cards = await getCards(lang, set)
 	const pics = await getSetPictures(set, lang)
 	return {
 		id: set.id,
@@ -72,7 +73,7 @@ export async function setToSetSimple(set: Set, lang: SupportedLanguages): Promis
 		symbol: pics[1],
 		name: set.name[lang] as string,
 		cardCount: {
-			total: set.cardCount.total,
+			total: Math.max(set.cardCount.official, cards.length),
 			official: set.cardCount.official
 		},
 	}
@@ -90,7 +91,7 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 		},
 		tcgOnline: set.tcgOnline,
 		cardCount: {
-			total: set.cardCount.total,
+			total: Math.max(set.cardCount.official, cards.length),
 			official: set.cardCount.official,
 			normal: cards.reduce((count, card) => count + (card[1].variants?.normal ?? set.variants?.normal ? 1 : 0), 0),
 			reverse: cards.reduce((count, card) => count + (card[1].variants?.reverse ?? set.variants?.reverse ? 1 : 0), 0),
