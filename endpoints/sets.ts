@@ -1,15 +1,16 @@
 import { SetList, Set as SetSingle, Card as CardSingle } from '@tcgdex/sdk/interfaces'
-import { getSet, getSets, isSetAvailable, setToSetSimple, setToSetSingle } from "../utils/setUtil"
+import { getSets, isSetAvailable, setToSetSimple, setToSetSingle } from "../utils/setUtil"
 import { Languages, Set } from '../db/interfaces'
 import { Endpoint } from '../interfaces'
 import { cardToCardSingle, getCards } from '../utils/cardUtil'
 
 export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<Set>> {
+
 	public constructor(
 		private lang: keyof Languages
 	) {}
 
-	public async index(common: Array<Set>) {
+	public async index(common: Array<Set>): Promise<SetList> {
 		const sets = common
 			.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1)
 
@@ -18,7 +19,7 @@ export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<S
 		return tmp
 	}
 
-	public async item(common: Array<Set>) {
+	public async item(common: Array<Set>): Promise<Record<string, SetSingle>> {
 		const sets= await Promise.all(common
 			.map((set) => setToSetSingle(set, this.lang)))
 		const res: Record<string, SetSingle> = {}
@@ -38,7 +39,9 @@ export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<S
 	public async sub(common: Array<Set>, item: string) {
 		const set = common.find((s) => s.name[this.lang] === item)
 
-		if (!set || !isSetAvailable(set, this.lang)) return undefined
+		if (!set || !isSetAvailable(set, this.lang)) {
+			return undefined
+		}
 
 		const lit = await getCards(this.lang, set)
 		const l: Record<string, CardSingle> = {}
@@ -48,4 +51,5 @@ export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<S
 
 		return l
 	}
+
 }

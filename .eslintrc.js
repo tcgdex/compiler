@@ -15,9 +15,7 @@
 	},
 	extends: [
 		"eslint:all",
-		// "plugin:react/recommended",
 		"plugin:@typescript-eslint/recommended",
-		// "plugin:@next/next/recommended"
 	],
 	globals: {
 		Atomics: "readonly",
@@ -25,20 +23,11 @@
 	},
 	parser: "@typescript-eslint/parser",
 	parserOptions: {
-		// ecmaFeatures: {
-		// 	jsx: true
-		// },
 		project: "tsconfig.json"
 	},
 	plugins: [
-		// "react",
 		"@typescript-eslint"
 	],
-	// settings: {
-	// 	react: {
-	// 		version: "detect"
-	// 	}
-	// },
 	root: true,
 	rules: {
 		// Tab indent and force switch to have one too
@@ -243,6 +232,10 @@
 			"error",
 			"consistent"
 		],
+		"function-paren-newline": [
+			"error",
+			"consistent"
+		],
 		"no-use-before-define": "off",
 		"@typescript-eslint/no-use-before-define": "error",
 		"capitalized-comments": "off",
@@ -296,19 +289,25 @@
 		"@typescript-eslint/no-useless-constructor": "error",
 		"lines-between-class-members": "off",
 		"@typescript-eslint/lines-between-class-members": "error",
-		// "max-lines": [
-		// 	"warn",
-		// 	{
-		// 		"max": 500,
-		// 		"skipBlankLines": true,
-		// 		"skipComments": true
-		// 	}
-		// ]
-		"max-lines": "off",
+		"max-lines": [
+			"warn",
+			{
+				"max": 500,
+				"skipBlankLines": true,
+				"skipComments": true
+			}
+		],
 		"no-plusplus": "off",
 		"id-length": [
 			"warn",
 			{ "exceptions": ["_"] }
-		]
+		],
+		"default-param-last": "off",
+		// "@typescript-eslint/default-param-last": "error",
+		// Temporary OFF
+		"@typescript-eslint/default-param-last": "off",
+		"no-continue": "off",
+		"require-atomic-updates": "off",
+		"require-await": "off"
 	}
 };

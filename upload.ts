@@ -1,5 +1,4 @@
 import { config } from 'dotenv'
-import path from 'path'
 import { ConnectConfig } from 'ssh2'
 import SFTPPromise from './SFTPPromise'
 
@@ -7,19 +6,10 @@ config()
 
 const sshConfig: ConnectConfig = {
 	host: process.env.UPLOAD_REMOTE,
-	username: process.env.UPLOAD_USERNAME,
-	password: process.env.UPLOAD_PASSWORD ,
-	port: 22
-};
-
-async function main() {
+	password: process.env.UPLOAD_PASSWORD,
+	port: 22,
+	username: process.env.UPLOAD_USERNAME
 }
-
-main().then(msg => {
-	console.log(msg);
-}).catch(err => {
-	console.log(`main error: ${err.message}`);
-});
 
 ;(async () => {
 	const client = new SFTPPromise(sshConfig)
@@ -27,6 +17,6 @@ main().then(msg => {
 	await client.connect()
 	const src = `${__dirname}/dist`
 	const dst = process.env.UPLOAD_DIST as string
-	await client.uploadDir(src, dst, /\.git/g)
+	await client.uploadDir(src, dst, /\.git/gu)
 	process.exit(0)
 })()

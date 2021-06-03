@@ -4,76 +4,77 @@ type translatable = 'types' | 'rarity' | 'stage' | 'category' | 'suffix' | 'abil
 
 const translations: Record<string, Record<translatable, Record<string, string>>> = {
 	fr: {
-		types: {
-			'Colorless': 'Incolore',
-			'Darkness': 'Obscurité',
-			'Dragon': 'Dragon',
-			'Fairy': 'Fée',
-			'Fighting': 'Combat',
-			'Fire': 'Feu',
-			'Grass': 'Plante',
-			'Lightning': 'Électrique',
-			'Metal': 'Métal',
-			'Psychic': 'Psy',
-			'Water': 'Eau'
-		},
-		rarity: {
-			'None': 'Rien',
-			'Common': 'Commune',
-			'Uncommon': 'Non Commune',
-			'Rare': 'Rare',
-			'Ultra Rare': 'Ultra Rare',
-			'Secret Rare': 'Magnifique rare'
-		},
-		stage: {
-			"Basic": 'Base',
-			"BREAK": 'TURBO',
-			"LEVEL-UP": 'Niveau Sup',
-			"MEGA": 'MÉGA',
-			"RESTORED": 'RECRÉE',
-			"Stage1": 'Niveau1',
-			"Stage2": 'Biveau2',
-			"VMAX": 'VMAX'
-		},
-		category: {
-			Pokemon: 'Pokémon',
-			Trainer: 'Dresseur',
-			Energy: 'Énergie'
-		},
-		suffix: {
-			'EX': 'EX',
-			'GX': 'GX',
-			'V': 'V',
-			'Legend': 'LÉGENDE',
-			'Prime': 'Prime',
-			'SP': 'SP',
-			'TAG TEAM-GX': 'TAG TEAM-GX',
-		},
 		abilityType: {
-			'Pokemon Power': 'Pouvoir Pokémon',
+			'Ability': 'Talent',
+			'Ancient Trait': 'Trait Antique',
 			'Poke-BODY': 'Poké-BODY',
 			'Poke-POWER': 'Poké-POWER',
-			'Ability': 'Talent',
-			'Ancient Trait': 'Trait Antique'
+			'Pokemon Power': 'Pouvoir Pokémon'
 		},
-		trainerType: {
-			'Supporter': 'Supporter',
-			'Item': 'Objet',
-			'Stadium': 'Stade',
-			'Tool': 'Outil',
-			'Ace Spec': 'High-Tech',
-			'Technical Machine': 'Machine Technique',
-			'Goldenred Game Corner': 'Salle de jeu de Doublonville',
-			'Rocket\'s Secret Machine': 'Machine secrète des Rocket'
+		category: {
+			Energy: 'Énergie',
+			Pokemon: 'Pokémon',
+			Trainer: 'Dresseur'
 		},
 		energyType: {
 			Normal: 'Normal',
 			Special: 'Spécial'
 		},
+		rarity: {
+			'Common': 'Commune',
+			'None': 'Rien',
+			'Rare': 'Rare',
+			'Secret Rare': 'Magnifique rare',
+			'Ultra Rare': 'Ultra Rare',
+			'Uncommon': 'Non Commune'
+		},
+		stage: {
+			'BREAK': 'TURBO',
+			'Basic': 'Base',
+			'LEVEL-UP': 'Niveau Sup',
+			'MEGA': 'MÉGA',
+			'RESTORED': 'RECRÉE',
+			'Stage1': 'Niveau1',
+			'Stage2': 'Niveau2',
+			'VMAX': 'VMAX'
+		},
+		suffix: {
+			'EX': 'EX',
+			'GX': 'GX',
+			'Legend': 'LÉGENDE',
+			'Prime': 'Prime',
+			'SP': 'SP',
+			'TAG TEAM-GX': 'TAG TEAM-GX',
+			'V': 'V'
+		},
+		trainerType: {
+			'Ace Spec': 'High-Tech',
+			'Goldenred Game Corner': 'Salle de jeu de Doublonville',
+			'Item': 'Objet',
+			'Rocket\'s Secret Machine': 'Machine secrète des Rocket',
+			'Stadium': 'Stade',
+			'Supporter': 'Supporter',
+			'Technical Machine': 'Machine Technique',
+			'Tool': 'Outil'
+		},
+		types: {
+			Colorless: 'Incolore',
+			Darkness: 'Obscurité',
+			Dragon: 'Dragon',
+			Fairy: 'Fée',
+			Fighting: 'Combat',
+			Fire: 'Feu',
+			Grass: 'Plante',
+			Lightning: 'Électrique',
+			Metal: 'Métal',
+			Psychic: 'Psy',
+			Water: 'Eau'
+		}
+
 	}
 }
 
-export default function translate(item: translatable, key: string | undefined, lang: SupportedLanguages) {
+export default function translate(item: translatable, key: string | undefined, lang: SupportedLanguages): string | undefined {
 	if (!key) {
 		return key
 	}
@@ -82,7 +83,7 @@ export default function translate(item: translatable, key: string | undefined, l
 	}
 	const res = translations[lang]?.[item]?.[key]
 	if (!res) {
-		throw new Error(`Could not find translation for ${lang}${item}.${key}`);
+		throw new Error(`Could not find translation for ${lang}${item}.${key}`)
 	}
 	return res
 }

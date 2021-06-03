@@ -1,5 +1,5 @@
-import { Set, SupportedLanguages } from "db/interfaces"
-import { fetchRemoteFile, smartGlob } from "./util"
+import { Set, SupportedLanguages } from 'db/interfaces'
+import { fetchRemoteFile, smartGlob } from './util'
 import { cardToCardSimple, getCards } from './cardUtil'
 import { SetResume, Set as SetSingle } from '@tcgdex/sdk/interfaces'
 
@@ -9,52 +9,47 @@ interface t {
 
 const setCache: t = {}
 
-// Dont use cache as it wont necessary have them all
-export async function getSets(serie = '*', lang: SupportedLanguages): Promise<Array<Set>> {
-	// list sets names
-	const rawSets = (await smartGlob(`./db/data/${serie}/*.js`)).map((set) => set.substring(set.lastIndexOf('/')+1, set.lastIndexOf('.')))
-	// Fetch sets
-	const sets = (await Promise.all(rawSets.map((set) => getSet(set, serie, lang))))
-		// Filter sets
-		.filter((set) => isSetAvailable(set, lang))
-		// Sort sets by release date
-		.sort((a, b) => {
-			return a.releaseDate > b.releaseDate ? 1 : -1
-		})
-	return sets
+export function isSetAvailable(set: Set, lang: SupportedLanguages): boolean {
+	return lang in set.name
 }
 
 /**
  * Return the set
  * @param name the name of the set (don't include.js/.ts)
  */
-export async function getSet(name: string, serie = '*', lang: SupportedLanguages): Promise<Set> {
+export async function getSet(name: string, serie = '*'): Promise<Set> {
 	if (!setCache[name]) {
 		try {
 			const [path] = await smartGlob(`./db/data/${serie}/${name}.js`)
 			setCache[name] = (await import(path.replace('./', '../'))).default
-		} catch (e) {
-			const set = (await getSets(undefined, lang)).find((s) => s.id === name)
-			if (set) {
-				return set
-			}
-			console.error(e)
-			console.error(`Error trying to import importing (${`db/data/*/${name}.js`})`)
+		} catch (error) {
+			console.error(error)
+			console.error(`Error trying to import importing (${`db/data/${serie}/${name}.js`})`)
 			process.exit(1)
 		}
 	}
 	return setCache[name]
 }
 
-export function isSetAvailable(set: Set, lang: SupportedLanguages) {
-	return lang in set.name
+
+// Dont use cache as it wont necessary have them all
+export async function getSets(serie = '*', lang: SupportedLanguages): Promise<Array<Set>> {
+	// list sets names
+	const rawSets = (await smartGlob(`./db/data/${serie}/*.js`)).map((set) => set.substring(set.lastIndexOf('/') + 1, set.lastIndexOf('.')))
+	// Fetch sets
+	const sets = (await Promise.all(rawSets.map((set) => getSet(set, serie))))
+		// Filter sets
+		.filter((set) => isSetAvailable(set, lang))
+		// Sort sets by release date
+		.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1)
+	return sets
 }
 
 export async function getSetPictures(set: Set, lang: SupportedLanguages): Promise<[string | undefined, string | undefined]> {
 	try {
-		const file = await fetchRemoteFile(`https://assets.tcgdex.net/datas.json`)
-		const logoExists = !!file[lang]?.[set.serie.id]?.[set.id]?.logo ? `https://assets.tcgdex.net/${lang}/${set.serie.id}/${set.id}/logo` : undefined
-		const symbolExists = !!file.univ?.[set.serie.id]?.[set.id]?.symbol ? `https://assets.tcgdex.net/univ/${set.serie.id}/${set.id}/symbol` : undefined
+		const file = await fetchRemoteFile('https://assets.tcgdex.net/datas.json')
+		const logoExists = file[lang]?.[set.serie.id]?.[set.id]?.logo ? `https://assets.tcgdex.net/${lang}/${set.serie.id}/${set.id}/logo` : undefined
+		const symbolExists = file.univ?.[set.serie.id]?.[set.id]?.symbol ? `https://assets.tcgdex.net/univ/${set.serie.id}/${set.id}/symbol` : undefined
 		return [
 			logoExists,
 			symbolExists
@@ -68,14 +63,14 @@ export async function setToSetSimple(set: Set, lang: SupportedLanguages): Promis
 	const cards = await getCards(lang, set)
 	const pics = await getSetPictures(set, lang)
 	return {
+		cardCount: {
+			official: set.cardCount.official,
+			total: Math.max(set.cardCount.official, cards.length)
+		},
 		id: set.id,
 		logo: pics[0],
-		symbol: pics[1],
 		name: set.name[lang] as string,
-		cardCount: {
-			total: Math.max(set.cardCount.official, cards.length),
-			official: set.cardCount.official
-		},
+		symbol: pics[1]
 	}
 }
 
@@ -83,28 +78,28 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 	const cards = await getCards(lang, set)
 	const pics = await getSetPictures(set, lang)
 	return {
-		name: set.name[lang] as string,
+		cardCount: {
+			firstEd: cards.reduce((count, card) => count + (card[1].variants?.firstEdition ?? set.variants?.firstEdition ? 1 : 0), 0),
+			holo: cards.reduce((count, card) => count + (card[1].variants?.holo ?? set.variants?.holo ? 1 : 0), 0),
+			normal: cards.reduce((count, card) => count + (card[1].variants?.normal ?? set.variants?.normal ? 1 : 0), 0),
+			official: set.cardCount.official,
+			reverse: cards.reduce((count, card) => count + (card[1].variants?.reverse ?? set.variants?.reverse ? 1 : 0), 0),
+			total: Math.max(set.cardCount.official, cards.length)
+		},
+		cards: await Promise.all(cards.map(([id, card]) => cardToCardSimple(id, card, lang))),
 		id: set.id,
+		legal: set.legal && {
+			expanded: set.legal.expanded,
+			standard: set.legal.standard
+		},
+		logo: pics[0],
+		name: set.name[lang] as string,
+		releaseDate: set.releaseDate,
 		serie: {
 			id: set.serie.id,
 			name: set.serie.name[lang] as string
 		},
-		tcgOnline: set.tcgOnline,
-		cardCount: {
-			total: Math.max(set.cardCount.official, cards.length),
-			official: set.cardCount.official,
-			normal: cards.reduce((count, card) => count + (card[1].variants?.normal ?? set.variants?.normal ? 1 : 0), 0),
-			reverse: cards.reduce((count, card) => count + (card[1].variants?.reverse ?? set.variants?.reverse ? 1 : 0), 0),
-			holo: cards.reduce((count, card) => count + (card[1].variants?.holo ?? set.variants?.holo ? 1 : 0), 0),
-			firstEd: cards.reduce((count, card) => count + (card[1].variants?.firstEdition ?? set.variants?.firstEdition ? 1 : 0), 0),
-		},
-		releaseDate: set.releaseDate,
-		legal: set.legal && {
-			standard: set.legal.standard,
-			expanded: set.legal.expanded
-		},
-		logo: pics[0],
 		symbol: pics[1],
-		cards: await Promise.all(cards.map(([id, card]) => cardToCardSimple(id, card, lang)))
+		tcgOnline: set.tcgOnline
 	}
 }

@@ -1,4 +1,4 @@
-import { ConnectConfig, Client, SFTPWrapper } from "ssh2";
+import { ConnectConfig, Client, SFTPWrapper } from 'ssh2'
 import { Stats, InputAttributes } from 'ssh2-streams'
 import { promises as fs } from 'fs'
 import { posix as pathJS } from 'path'
@@ -7,14 +7,25 @@ import Logger from '@dzeio/logger'
 const logger = new Logger('SFTPPromise')
 export default class SFTPPromise {
 
-	private sftp?: SFTPWrapper
-	private conn: Client = new Client()
 	public debug = false
+
 	public tmpFolder?: string
+
+	private sftp?: SFTPWrapper
+
+	private conn: Client = new Client()
+
+	private queue = new Queue(50, 10)
+
+	private filesToUpload = 0
+
+	private filesUploaded = 0
+
+	private lastTimeDiff: Array<number> = Array.from(new Array(900), () => 0)
 
 	public constructor(public config: ConnectConfig) {}
 
-	public connect() {
+	public connect(): Promise<void> {
 		return new Promise<void>((res, rej) => {
 			this.conn.on('ready', () => {
 				this.conn.sftp((err, sftpLocal) => {
@@ -25,7 +36,7 @@ export default class SFTPPromise {
 		})
 	}
 
-	public async makeTemporaryFolder() {
+	public async makeTemporaryFolder(): Promise<void> {
 		this.l('Making temporary Folder')
 		this.tmpFolder = await fs.mkdtemp('tcgdex-generator')
 	}
@@ -51,25 +62,25 @@ export default class SFTPPromise {
 		}
 	}
 
-	public async mkdir(path: string, recursive = false, attributes?: InputAttributes, ) {
+	public async mkdir(path: string, recursive = false, attributes?: InputAttributes): Promise<void> {
 		this.l('Creating remote folder', path)
 		if (recursive) {
 			this.l('Making temporary Folder')
 			const folders = path.split('/')
 			let current = ''
-			for (const item of folders) {
-				current += '/' + item
-				if (!(await this.exists(current))) {
+			await Promise.all(folders.map(async (item) => {
+				current += `/${item}`
+				if (!await this.exists(current)) {
 					await this.mkdir(current)
 				}
-			}
+			}))
 			return
 		}
 		if (await this.exists(path)) {
 			return
 		}
 		const sftp = this.getSFTP()
-		return new Promise<void>((res, rej) => {
+		await new Promise<void>((res, rej) => {
 			const result = (err?: any) => {
 				if (err) {
 					rej(err)
@@ -81,66 +92,68 @@ export default class SFTPPromise {
 			} else {
 				sftp.mkdir(path, result)
 			}
-
 		})
 	}
 
-	public async upload(localFile: Buffer|string, path: string) {
+	public async upload(localFile: Buffer|string, path: string): Promise<void> {
 		const sftp = this.getSFTP()
-		if (typeof localFile !== 'string') {
+		let file = localFile
+		if (typeof file !== 'string') {
 			if (!this.tmpFolder) {
 				await this.makeTemporaryFolder()
 			}
-			const tmpFile = pathJS.join(this.tmpFolder as string, Math.random().toString().replace('.', ''))
-			// this.l('Writing to temporary Folder')
-			await fs.writeFile(tmpFile, localFile)
-			localFile = tmpFile
+			const tmpFile = pathJS.join(
+				this.tmpFolder as string,
+				Math.random()
+					.toString()
+					.replace('.', '')
+			)
+			await fs.writeFile(tmpFile, file)
+			// IDK there is no race condition
+			// eslint-disable-next-line require-atomic-updates
+			file = tmpFile
 		}
-		const remoteFolder = pathJS.dirname(path).replace(/\\/g, '/')
-		if (!(await this.exists(remoteFolder))) {
+		const remoteFolder = pathJS.dirname(path).replace(/\\/gu, '/')
+		if (!await this.exists(remoteFolder)) {
 			await this.mkdir(remoteFolder, true)
 		}
-		return new Promise<void>((result, rej) => {
+		await new Promise<void>((result, rej) => {
 			this.l('Sending file', path)
-			sftp.fastPut(localFile as string, path, {
+			sftp.fastPut(file as string, path, {
 				concurrency: 1,
-				step: (uploaded, u, total) => {
-					this.l(path.substr(path.lastIndexOf('/')), Math.round(uploaded*100/total),'%', '/', 100, '%')
+				step: (uploaded, _, total) => {
+					this.l(path.substr(path.lastIndexOf('/')), Math.round(uploaded * 100 / total), '%', '/', 100, '%')
 				}
 			}, (err) => {
 				if (err) {
-					this.l('Error fastPutting file', localFile, 'to', path)
+					this.l('Error fastPutting file', file, 'to', path)
 					rej(err)
 				}
 				this.l('Done')
 				result()
-				return
 			})
 		})
 	}
 
-	private queue = new Queue(50, 10)
-	private filesToUpload = 0
-	private filesUploaded = 0
-
 	public async listDir(path: string, exclude?: RegExp): Promise<Array<string>> {
 		const files = await fs.readdir(path)
 		logger.log('Reading', path)
-		let res: Array<string> = []
-		for (const file of files) {
-			if (exclude?.test(file)) {continue}
+		const res: Array<string> = []
+		await Promise.all(files.map(async (file) => {
+			if (exclude?.test(file)) {
+				return
+			}
 			const filePath = `${path}/${file}`
 			const stat = await fs.stat(filePath)
 			if (stat.isDirectory()) {
-				res = res.concat(await this.listDir(filePath))
+				res.push(...await this.listDir(filePath))
 			} else {
 				res.push(filePath)
 			}
-		}
+		}))
 		return res
 	}
 
-	private lastTimeDiff: Array<number> = Array.from(new Array(900), () => 0)
 	public async uploadDir(localPath: string, remotePath: string, exclude?: RegExp, root = true) {
 		if (root) {
 			this.filesToUpload = 0
@@ -154,20 +167,24 @@ export default class SFTPPromise {
 		this.queue.start()
 		for (const file of files) {
 			// console.log('t1')
-			if (exclude?.test(file)) {continue}
+			if (exclude?.test(file)) {
+				continue
+			}
 			// console.log('t1')
 			const filePath = file
 			const remoteFilePath = `${remotePath}/${file.replace(localPath, '')}`
 			// console.log('t1')
 			const now = new Date().getTime()
 			await this.queue.add(
-				this.upload(filePath, remoteFilePath).then(() => {
-					this.filesUploaded++
-					this.lastTimeDiff.push(new Date().getTime() - now)
-					this.lastTimeDiff.shift()
-					const time = ((this.filesToUpload-this.filesUploaded)*(this.lastTimeDiff.reduce((p, c) => p + c, 0)/this.lastTimeDiff.length)/10000)
-					console.log(`Files uploaded ${(this.filesUploaded * 100 / this.filesToUpload).toFixed(0)}% ${time > 60 ? `${(time/60).toFixed(0)}m` : `${time.toFixed(0)}s`} ${this.filesUploaded}/${this.filesToUpload}`)
-				}).catch((err) => logger.log(err, 'Error uploading', filePath, 'to', remoteFilePath))
+				this.upload(filePath, remoteFilePath)
+					.then(() => {
+						this.filesUploaded++
+						this.lastTimeDiff.push(new Date().getTime() - now)
+						this.lastTimeDiff.shift()
+						const time = (this.filesToUpload - this.filesUploaded) * (this.lastTimeDiff.reduce((p, c) => p + c, 0) / this.lastTimeDiff.length) / 10000
+						console.log(`Files uploaded ${(this.filesUploaded * 100 / this.filesToUpload).toFixed(0)}% ${time > 60 ? `${(time/60).toFixed(0)}m` : `${time.toFixed(0)}s`} ${this.filesUploaded}/${this.filesToUpload}`)
+					})
+					.catch((err) => logger.log(err, 'Error uploading', filePath, 'to', remoteFilePath))
 			)
 		}
 		if (root) {
@@ -188,4 +205,5 @@ export default class SFTPPromise {
 			logger.log(...messages)
 		}
 	}
+
 }

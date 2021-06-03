@@ -1,12 +1,22 @@
-import { setToSetSimple } from "./setUtil"
-import { fetchRemoteFile, smartGlob } from "./util"
+/* eslint-disable sort-keys */
+import { setToSetSimple } from './setUtil'
+import { fetchRemoteFile, smartGlob } from './util'
 import { Set, SupportedLanguages, Card, Types } from 'db/interfaces'
 import { Card as CardSingle, CardResume } from '@tcgdex/sdk/interfaces'
 import translate from './translationUtil'
 
-type ObjectList<T = any> = Partial<Record<string, T>>
-
-type RemoteData = ObjectList<ObjectList<ObjectList<ObjectList<string>>>>
+export async function getCardPictures(cardId: string, card: Card, lang: SupportedLanguages): Promise<string | undefined> {
+	try {
+		const file = await fetchRemoteFile('https://assets.tcgdex.net/datas.json')
+		const fileExists = Boolean(file[lang]?.[card.set.serie.id]?.[card.set.id]?.[cardId])
+		if (fileExists) {
+			return `https://assets.tcgdex.net/${lang}/${card.set.serie.id}/${card.set.id}/${cardId}`
+		}
+	} catch {
+		return undefined
+	}
+	return undefined
+}
 
 export async function cardToCardSimple(id: string, card: Card, lang: SupportedLanguages): Promise<CardResume> {
 	const cardName = card.name[lang]
@@ -16,26 +26,14 @@ export async function cardToCardSimple(id: string, card: Card, lang: SupportedLa
 	const img = await getCardPictures(id, card, lang)
 	return {
 		id: `${card.set.id}-${id}`,
+		image: img,
 		localId: id,
-		name: cardName,
-		image: img
+		name: cardName
 	}
 }
 
-export async function getCardPictures(cardId: string, card: Card, lang: SupportedLanguages): Promise<string | undefined> {
-	try {
-		const file = await fetchRemoteFile(`https://assets.tcgdex.net/datas.json`)
-		const fileExists = !!file[lang]?.[card.set.serie.id]?.[card.set.id]?.[cardId]
-		if (fileExists) {
-			return `https://assets.tcgdex.net/${lang}/${card.set.serie.id}/${card.set.id}/${cardId}`
-		}
-	} catch {
-		return undefined
-	}
-}
-
+// eslint-disable-next-line max-lines-per-function
 export async function cardToCardSingle(localId: string, card: Card, lang: SupportedLanguages): Promise<CardSingle> {
-
 	const image = await getCardPictures(localId, card, lang)
 
 	if (!card.name[lang]) {
@@ -43,22 +41,22 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 	}
 
 	return {
-		id: `${card.set.id}-${localId}`,
-		localId: localId,
-		name: card.name[lang] as string,
-		image: image,
-
-		illustrator: card.illustrator,
-		rarity: translate('rarity', card.rarity, lang) as any,
 		category: translate('category', card.category, lang) as any,
+		id: `${card.set.id}-${localId}`,
+		illustrator: card.illustrator,
+		image,
+		localId,
+		name: card.name[lang] as string,
+
+		rarity: translate('rarity', card.rarity, lang) as any,
+		set: await setToSetSimple(card.set, lang),
 		variants: {
+			firstEdition: typeof card.variants?.firstEdition === 'boolean' ? card.variants.firstEdition : typeof card.set.variants?.firstEdition === 'boolean' ? card.set.variants.firstEdition : false,
+			holo: typeof card.variants?.holo === 'boolean' ? card.variants.holo : typeof card.set.variants?.holo === 'boolean' ? card.set.variants.holo : true,
 			normal: typeof card.variants?.normal === 'boolean' ? card.variants.normal : typeof card.set.variants?.normal === 'boolean' ? card.set.variants.normal : true,
 			reverse: typeof card.variants?.reverse === 'boolean' ? card.variants.reverse : typeof card.set.variants?.reverse === 'boolean' ? card.set.variants.reverse : true,
-			holo: typeof card.variants?.holo === 'boolean' ? card.variants.holo : typeof card.set.variants?.holo === 'boolean' ? card.set.variants.holo : true,
-			firstEdition: typeof card.variants?.firstEdition === 'boolean' ? card.variants.firstEdition : typeof card.set.variants?.firstEdition === 'boolean' ? card.set.variants.firstEdition : false,
 		},
 
-		set: await setToSetSimple(card.set, lang),
 
 		dexId: card.dexId,
 		hp: card.hp,
@@ -81,12 +79,11 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 		})),
 
 		attacks: card.attacks?.map((el) => ({
-			cost: el.cost?.map((t) => translate('types', t, lang)) as Types[],
+			cost: el.cost?.map((t) => translate('types', t, lang)) as Array<Types>,
 			name: el.name[lang] as string,
 			effect: el.effect ? el.effect[lang] : undefined,
 			damage: el.damage
 		})),
-
 		weaknesses: card.weaknesses?.map((el) => ({
 			type: translate('types', el.type, lang) as Types,
 			value: el.value
@@ -139,12 +136,11 @@ export async function getCards(lang: SupportedLanguages,set?: Set): Promise<Arra
 
 	// Sort by id when possible
 	return list.sort(([a], [b]) => {
-		const ra = parseInt(a)
-		const rb = parseInt(b)
+		const ra = parseInt(a, 10)
+		const rb = parseInt(b, 10)
 		if (!isNaN(ra) && !isNaN(rb)) {
 			return ra - rb
-		} else {
-			return a >= b ? 1 : -1
 		}
+		return a >= b ? 1 : -1
 	})
 }
