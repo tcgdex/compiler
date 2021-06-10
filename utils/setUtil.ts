@@ -46,8 +46,8 @@ export async function getSet(name: string, serie = '*', lang: SupportedLanguages
 	return setCache[name]
 }
 
-export function isSetAvailable(set: Set, lang: SupportedLanguages) {
-	return lang in set.name
+export async function isSetAvailable(set: Set, lang: SupportedLanguages) {
+	return lang in set.name && lang in set.serie.name
 }
 
 export async function getSetPictures(set: Set, lang: SupportedLanguages): Promise<[string | undefined, string | undefined]> {
