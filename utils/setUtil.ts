@@ -46,7 +46,7 @@ export async function getSet(name: string, serie = '*', lang: SupportedLanguages
 	return setCache[name]
 }
 
-export async function isSetAvailable(set: Set, lang: SupportedLanguages) {
+export function isSetAvailable(set: Set, lang: SupportedLanguages): boolean {
 	return lang in set.name && lang in set.serie.name
 }
 
