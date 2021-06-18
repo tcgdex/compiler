@@ -1,5 +1,5 @@
-import { Set, SupportedLanguages } from "db/interfaces"
-import { fetchRemoteFile, setIsLegal, smartGlob } from "./util"
+import { Set, SupportedLanguages } from 'db/interfaces'
+import { fetchRemoteFile, setIsLegal, smartGlob } from './util'
 import { cardToCardSimple, getCards } from './cardUtil'
 import { SetResume, Set as SetSingle } from '@tcgdex/sdk/interfaces'
 
@@ -88,8 +88,8 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 		cards: await Promise.all(cards.map(([id, card]) => cardToCardSimple(id, card, lang))),
 		id: set.id,
 		legal: {
-			standard: setIsLegal('standard', set),
-			expanded: setIsLegal('expanded', set)
+			expanded: setIsLegal('expanded', set),
+			standard: setIsLegal('standard', set)
 		},
 		logo: pics[0],
 		name: set.name[lang] as string,

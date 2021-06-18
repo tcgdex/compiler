@@ -1,6 +1,6 @@
 /* eslint-disable sort-keys */
-import { setToSetSimple } from "./setUtil"
-import { cardIsLegal, fetchRemoteFile, smartGlob } from "./util"
+import { setToSetSimple } from './setUtil'
+import { cardIsLegal, fetchRemoteFile, smartGlob } from './util'
 import { Set, SupportedLanguages, Card, Types } from 'db/interfaces'
 import { Card as CardSingle, CardResume } from '@tcgdex/sdk/interfaces'
 import translate from './translationUtil'
@@ -54,7 +54,7 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 			firstEdition: typeof card.variants?.firstEdition === 'boolean' ? card.variants.firstEdition : typeof card.set.variants?.firstEdition === 'boolean' ? card.set.variants.firstEdition : false,
 			holo: typeof card.variants?.holo === 'boolean' ? card.variants.holo : typeof card.set.variants?.holo === 'boolean' ? card.set.variants.holo : true,
 			normal: typeof card.variants?.normal === 'boolean' ? card.variants.normal : typeof card.set.variants?.normal === 'boolean' ? card.set.variants.normal : true,
-			reverse: typeof card.variants?.reverse === 'boolean' ? card.variants.reverse : typeof card.set.variants?.reverse === 'boolean' ? card.set.variants.reverse : true,
+			reverse: typeof card.variants?.reverse === 'boolean' ? card.variants.reverse : typeof card.set.variants?.reverse === 'boolean' ? card.set.variants.reverse : true
 		},
 
 
@@ -121,7 +121,7 @@ export async function getCard(serie: string, setName: string, id: string): Promi
 }
 
 export async function getCards(lang: SupportedLanguages, set?: Set): Promise<Array<[string, Card]>> {
-	const cards = (await smartGlob(`./db/data/${(set && set.serie.name.en) ?? '*'}/${(set && set.name.en) ?? '*'}/*.js`))
+	const cards = await smartGlob(`./db/data/${(set && set.serie.name.en) ?? '*'}/${(set && set.name.en) ?? '*'}/*.js`)
 	const list: Array<[string, Card]> = []
 	for (const path of cards) {
 		const id = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'))

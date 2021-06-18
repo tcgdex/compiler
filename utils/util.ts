@@ -38,12 +38,12 @@ export async function smartGlob(query: string): Promise<Array<string>> {
 	return globCache[query]
 }
 
-export function cardIsLegal(type: 'standard' | 'expanded', card: Card, localId: string) {
+export function cardIsLegal(type: 'standard' | 'expanded', card: Card, localId: string): boolean {
 	const legal = legals[type]
 	if (
 		legal.includes.series.includes(card.set.serie.id) ||
 		legal.includes.sets.includes(card.set.id) ||
-		(card.regulationMark && legal.includes.regulationMark.includes(card.regulationMark))
+		card.regulationMark && legal.includes.regulationMark.includes(card.regulationMark)
 	) {
 		return !(
 			legal.excludes.sets.includes(card.set.id) ||
@@ -53,7 +53,7 @@ export function cardIsLegal(type: 'standard' | 'expanded', card: Card, localId: 
 	return false
 }
 
-export function setIsLegal(type: 'standard' | 'expanded', set: Set) {
+export function setIsLegal(type: 'standard' | 'expanded', set: Set): boolean {
 	const legal = legals[type]
 	if (
 		legal.includes.series.includes(set.serie.id) ||

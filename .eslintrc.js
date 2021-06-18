@@ -79,7 +79,14 @@
 		"@typescript-eslint/explicit-module-boundary-types": "warn",
 
 		// disallow certain types not safe
-		"@typescript-eslint/ban-types": "error",
+		"@typescript-eslint/ban-types": [
+			"error",
+			{
+				"types": {
+					"{}": false
+				}
+			}
+		],
 		"@typescript-eslint/consistent-type-assertions": "error",
 		"@typescript-eslint/consistent-type-definitions": "error",
 		"@typescript-eslint/explicit-member-accessibility": [
@@ -308,6 +315,8 @@
 		"@typescript-eslint/default-param-last": "off",
 		"no-continue": "off",
 		"require-atomic-updates": "off",
-		"require-await": "off"
+		"require-await": "off",
+		"prefer-destructuring": "off",
+		"max-params": ["warn", 5]
 	}
 };
