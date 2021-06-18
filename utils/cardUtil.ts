@@ -81,7 +81,7 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 		})),
 
 		attacks: card.attacks?.map((el) => ({
-			cost: el.cost?.map((t) => translate('types', t, lang)),
+			cost: el.cost?.map((t) => translate('types', t, lang)) as Array<Types>,
 			name: el.name[lang] as string,
 			effect: el.effect ? el.effect[lang] : undefined,
 			damage: el.damage
