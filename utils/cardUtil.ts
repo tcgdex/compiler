@@ -1,5 +1,5 @@
 import { setToSetSimple } from "./setUtil"
-import { fetchRemoteFile, smartGlob } from "./util"
+import { cardIsLegal, fetchRemoteFile, smartGlob } from "./util"
 import { Set, SupportedLanguages, Card, Types } from 'db/interfaces'
 import { Card as CardSingle, CardResume } from '@tcgdex/sdk/interfaces'
 import translate from './translationUtil'
@@ -104,6 +104,11 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 		trainerType: translate('trainerType', card.trainerType, lang) as any,
 		energyType: translate('energyType', card.energyType, lang) as any,
 		regulationMark: card.regulationMark,
+
+		legal: {
+			standard: cardIsLegal('standard', card, localId),
+			expanded: cardIsLegal('expanded', card, localId)
+		}
 
 	}
 }
