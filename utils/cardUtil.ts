@@ -81,7 +81,7 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 		})),
 
 		attacks: card.attacks?.map((el) => ({
-			cost: el.cost?.map((t) => translate('types', t, lang)) as Types[],
+			cost: el.cost?.map((t) => translate('types', t, lang)),
 			name: el.name[lang] as string,
 			effect: el.effect ? el.effect[lang] : undefined,
 			damage: el.damage
@@ -102,7 +102,9 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 		effect: card.effect ? card.effect[lang] : undefined,
 
 		trainerType: translate('trainerType', card.trainerType, lang) as any,
-		energyType: translate('energyType', card.energyType, lang) as any
+		energyType: translate('energyType', card.energyType, lang) as any,
+		regulationMark: card.regulationMark,
+
 	}
 }
 
@@ -116,7 +118,7 @@ export async function getCard(serie: string, setName: string, id: string): Promi
 	return (await import(`../db/data/${serie}/${setName}/${id}.js`)).default
 }
 
-export async function getCards(lang: SupportedLanguages,set?: Set): Promise<Array<[string, Card]>> {
+export async function getCards(lang: SupportedLanguages, set?: Set): Promise<Array<[string, Card]>> {
 	const cards = (await smartGlob(`./db/data/${(set && set.serie.name.en) ?? '*'}/${(set && set.name.en) ?? '*'}/*.js`))
 	const list: Array<[string, Card]> = []
 	for (const path of cards) {
