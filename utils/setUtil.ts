@@ -1,5 +1,5 @@
-import { Set, SupportedLanguages } from 'db/interfaces'
-import { fetchRemoteFile, smartGlob } from './util'
+import { Set, SupportedLanguages } from "db/interfaces"
+import { fetchRemoteFile, setIsLegal, smartGlob } from "./util"
 import { cardToCardSimple, getCards } from './cardUtil'
 import { SetResume, Set as SetSingle } from '@tcgdex/sdk/interfaces'
 
@@ -30,7 +30,6 @@ export async function getSet(name: string, serie = '*'): Promise<Set> {
 	}
 	return setCache[name]
 }
-
 
 // Dont use cache as it wont necessary have them all
 export async function getSets(serie = '*', lang: SupportedLanguages): Promise<Array<Set>> {
@@ -88,9 +87,9 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 		},
 		cards: await Promise.all(cards.map(([id, card]) => cardToCardSimple(id, card, lang))),
 		id: set.id,
-		legal: set.legal && {
-			expanded: set.legal.expanded,
-			standard: set.legal.standard
+		legal: {
+			standard: setIsLegal('standard', set),
+			expanded: setIsLegal('expanded', set)
 		},
 		logo: pics[0],
 		name: set.name[lang] as string,

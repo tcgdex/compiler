@@ -75,11 +75,10 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
-
-"@tcgdex/sdk@^2.0.0-beta.4":
-  version "2.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@tcgdex/sdk/-/sdk-2.0.0-beta.4.tgz#dc3fdab6a20fcbc314955c9fb04c3d8d5963d78b"
-  integrity sha512-iTtjf0Xb8Nj8i6NNit3jB/L+jrIZyIqm1C63I0YW+sGWlUdpuq4yDdgyyiscCCP6gRdlh8nsNwN6KkkYGXVDYg==
+"@tcgdex/sdk@^2.2.0-beta":
+  version "2.2.0-beta"
+  resolved "https://registry.yarnpkg.com/@tcgdex/sdk/-/sdk-2.2.0-beta.tgz#7fd9708ab438d839f31d3ba929da4e8a74376bf7"
+  integrity sha512-g5hkFmlw8fCfOj3CaZ+6NLgX0ttFbPSqrp2hZpzDYeV4qckBEu+qSDtP+G7LiXYPF+SQGjSKXQulxTNJZOcDLQ==
   dependencies:
     isomorphic-unfetch "^3.1.0"
 

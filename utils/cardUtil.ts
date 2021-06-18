@@ -1,6 +1,6 @@
 /* eslint-disable sort-keys */
-import { setToSetSimple } from './setUtil'
-import { fetchRemoteFile, smartGlob } from './util'
+import { setToSetSimple } from "./setUtil"
+import { cardIsLegal, fetchRemoteFile, smartGlob } from "./util"
 import { Set, SupportedLanguages, Card, Types } from 'db/interfaces'
 import { Card as CardSingle, CardResume } from '@tcgdex/sdk/interfaces'
 import translate from './translationUtil'
@@ -99,7 +99,14 @@ export async function cardToCardSingle(localId: string, card: Card, lang: Suppor
 		effect: card.effect ? card.effect[lang] : undefined,
 
 		trainerType: translate('trainerType', card.trainerType, lang) as any,
-		energyType: translate('energyType', card.energyType, lang) as any
+		energyType: translate('energyType', card.energyType, lang) as any,
+		regulationMark: card.regulationMark,
+
+		legal: {
+			standard: cardIsLegal('standard', card, localId),
+			expanded: cardIsLegal('expanded', card, localId)
+		}
+
 	}
 }
 
@@ -113,7 +120,7 @@ export async function getCard(serie: string, setName: string, id: string): Promi
 	return (await import(`../db/data/${serie}/${setName}/${id}.js`)).default
 }
 
-export async function getCards(lang: SupportedLanguages,set?: Set): Promise<Array<[string, Card]>> {
+export async function getCards(lang: SupportedLanguages, set?: Set): Promise<Array<[string, Card]>> {
 	const cards = (await smartGlob(`./db/data/${(set && set.serie.name.en) ?? '*'}/${(set && set.name.en) ?? '*'}/*.js`))
 	const list: Array<[string, Card]> = []
 	for (const path of cards) {

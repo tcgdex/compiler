@@ -1,5 +1,7 @@
+import { Card, Set } from 'db/interfaces'
 import glob from 'glob'
 import fetch from 'node-fetch'
+import * as legals from '../db/legals'
 
 export function urlize(str: string): string {
 	return str
@@ -34,4 +36,30 @@ export async function smartGlob(query: string): Promise<Array<string>> {
 		})
 	}
 	return globCache[query]
+}
+
+export function cardIsLegal(type: 'standard' | 'expanded', card: Card, localId: string) {
+	const legal = legals[type]
+	if (
+		legal.includes.series.includes(card.set.serie.id) ||
+		legal.includes.sets.includes(card.set.id) ||
+		(card.regulationMark && legal.includes.regulationMark.includes(card.regulationMark))
+	) {
+		return !(
+			legal.excludes.sets.includes(card.set.id) ||
+			legal.excludes.cards.includes(`${card.set.id}-${localId}`)
+		)
+	}
+	return false
+}
+
+export function setIsLegal(type: 'standard' | 'expanded', set: Set) {
+	const legal = legals[type]
+	if (
+		legal.includes.series.includes(set.serie.id) ||
+		legal.includes.sets.includes(set.id)
+	) {
+		return !legal.excludes.sets.includes(set.id)
+	}
+	return false
 }

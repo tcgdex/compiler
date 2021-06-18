@@ -17,10 +17,8 @@ export default class implements Endpoint<SerieList, SerieSingle, {}, Array<Serie
 		for (let key = 0; key < common.length; key++) {
 			const val = common[key];
 			const gen = await serieToSerieSingle(val, this.lang)
-			const name = val.name[this.lang]
-			if (name && val.id !== name.toLowerCase()) {
-				items[name] = gen
-			}
+			const name = val.name[this.lang] as string
+			items[name] = gen
 			items[val.id] = gen
 		}
 		return items
