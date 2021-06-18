@@ -1,5 +1,5 @@
 import { Set, SupportedLanguages } from "db/interfaces"
-import { fetchRemoteFile, smartGlob } from "./util"
+import { fetchRemoteFile, setIsLegal, smartGlob } from "./util"
 import { cardToCardSimple, getCards } from './cardUtil'
 import { SetResume, Set as SetSingle } from '@tcgdex/sdk/interfaces'
 
@@ -99,9 +99,9 @@ export async function setToSetSingle(set: Set, lang: SupportedLanguages): Promis
 			firstEd: cards.reduce((count, card) => count + (card[1].variants?.firstEdition ?? set.variants?.firstEdition ? 1 : 0), 0),
 		},
 		releaseDate: set.releaseDate,
-		legal: set.legal && {
-			standard: set.legal.standard,
-			expanded: set.legal.expanded
+		legal: {
+			standard: setIsLegal('standard', set),
+			expanded: setIsLegal('expanded', set)
 		},
 		logo: pics[0],
 		symbol: pics[1],

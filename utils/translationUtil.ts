@@ -73,10 +73,9 @@ const translations: Record<string, Record<translatable, Record<string, string>>>
 	}
 }
 
-export default function translate(item: translatable, key: string | undefined, lang: SupportedLanguages): string {
+export default function translate(item: translatable, key: string | undefined, lang: SupportedLanguages): string | undefined {
 	if (!key) {
-		throw new Error(`No Key ${lang}${item}.${key}`);
-		return ''
+		return key
 	}
 	if (lang === 'en') {
 		return key
