@@ -36,7 +36,7 @@ export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<S
 	}
 
 	public async sub(common: Array<Set>, item: string) {
-		const set = common.find((s) => s.name[this.lang] === item)
+		const set = common.find((s) => s.name[this.lang] === item || s.id === item)
 
 		if (!set || !isSetAvailable(set, this.lang)) return undefined
 
