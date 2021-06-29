@@ -4,7 +4,11 @@ import fetch from 'node-fetch'
 import * as legals from '../db/legals'
 
 export function urlize(str: string): string {
-	return str.replace('?', '%3F').normalize('NFC').replace(/["'\u0300-\u036f]/g, "")
+	return str
+		.replace('?', '%3F')
+		.normalize('NFC')
+		// eslint-disable-next-line no-misleading-character-class
+		.replace(/["'\u0300-\u036f]/gu, '')
 }
 
 interface fileCacheInterface {
@@ -25,19 +29,21 @@ export async function fetchRemoteFile<T = any>(url: string): Promise<T> {
 
 const globCache: Record<string, Array<string>> = {}
 
-export async function smartGlob(query: string) {
+export async function smartGlob(query: string): Promise<Array<string>> {
 	if (!globCache[query]) {
-		globCache[query] = await new Promise((res) => glob(query, (err, matches) => res(matches)))
+		globCache[query] = await new Promise((res) => {
+			glob(query, (err, matches) => res(matches))
+		})
 	}
 	return globCache[query]
 }
 
-export function cardIsLegal(type: 'standard' | 'expanded', card: Card, localId: string) {
+export function cardIsLegal(type: 'standard' | 'expanded', card: Card, localId: string): boolean {
 	const legal = legals[type]
 	if (
 		legal.includes.series.includes(card.set.serie.id) ||
 		legal.includes.sets.includes(card.set.id) ||
-		(card.regulationMark && legal.includes.regulationMark.includes(card.regulationMark))
+		card.regulationMark && legal.includes.regulationMark.includes(card.regulationMark)
 	) {
 		return !(
 			legal.excludes.sets.includes(card.set.id) ||
@@ -47,7 +53,7 @@ export function cardIsLegal(type: 'standard' | 'expanded', card: Card, localId: 
 	return false
 }
 
-export function setIsLegal(type: 'standard' | 'expanded', set: Set) {
+export function setIsLegal(type: 'standard' | 'expanded', set: Set): boolean {
 	const legal = legals[type]
 	if (
 		legal.includes.series.includes(set.serie.id) ||

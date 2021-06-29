@@ -15,10 +15,9 @@ const VERSION = 'v2'
 	const paths = (await fs.readdir('./endpoints')).filter((f) => f.endsWith('.ts'))
 
 	console.log('Prefetching pictures')
-	await fetchRemoteFile(`https://assets.tcgdex.net/datas.json`)
+	await fetchRemoteFile('https://assets.tcgdex.net/datas.json')
 
 	await fs.rm(`./dist/${VERSION}/${lang}`, {recursive: true, force: true})
-
 	console.log('Let\'s GO !')
 	for (const file of paths) {
 		const path = `./endpoints/${file}`

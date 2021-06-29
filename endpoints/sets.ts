@@ -1,15 +1,16 @@
 import { SetList, Set as SetSingle, Card as CardSingle } from '@tcgdex/sdk/interfaces'
-import { getSet, getSets, isSetAvailable, setToSetSimple, setToSetSingle } from "../utils/setUtil"
+import { getSets, isSetAvailable, setToSetSimple, setToSetSingle } from '../utils/setUtil'
 import { Languages, Set } from '../db/interfaces'
 import { Endpoint } from '../interfaces'
 import { cardToCardSingle, getCards } from '../utils/cardUtil'
 
 export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<Set>> {
+
 	public constructor(
 		private lang: keyof Languages
 	) {}
 
-	public async index(common: Array<Set>) {
+	public async index(common: Array<Set>): Promise<SetList> {
 		const sets = common
 			.sort((a, b) => a.releaseDate > b.releaseDate ? 1 : -1)
 
@@ -18,8 +19,8 @@ export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<S
 		return tmp
 	}
 
-	public async item(common: Array<Set>) {
-		const sets= await Promise.all(common
+	public async item(common: Array<Set>): Promise<Record<string, SetSingle>> {
+		const sets = await Promise.all(common
 			.map((set) => setToSetSingle(set, this.lang)))
 		const res: Record<string, SetSingle> = {}
 
@@ -31,21 +32,24 @@ export default class implements Endpoint<SetList, SetSingle, CardSingle, Array<S
 		return res
 	}
 
-	public async common() {
-		return (await getSets(undefined, this.lang))
+	public async common(): Promise<Array<Set>> {
+		return getSets(undefined, this.lang)
 	}
 
-	public async sub(common: Array<Set>, item: string) {
+	public async sub(common: Array<Set>, item: string): Promise<Record<string, CardSingle> | undefined> {
 		const set = common.find((s) => s.name[this.lang] === item || s.id === item)
 
-		if (!set || !isSetAvailable(set, this.lang)) return undefined
-
-		const lit = await getCards(this.lang, set)
-		const l: Record<string, CardSingle> = {}
-		for (let i of lit) {
-			l[i[0]] = await cardToCardSingle(i[0], i[1], this.lang)
+		if (!set || !isSetAvailable(set, this.lang)) {
+			return undefined
 		}
 
-		return l
+		const lit = await getCards(this.lang, set)
+		const list: Record<string, CardSingle> = {}
+		for await (const card of lit) {
+			list[card[0]] = await cardToCardSingle(card[0], card[1], this.lang)
+		}
+
+		return list
 	}
+
 }
