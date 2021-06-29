@@ -69,7 +69,14 @@ jobs:
 
     - name: Build
       working-directory: ./
-      run: yarn && yarn start && TCGDEX_COMPILER_LANG=fr yarn start
+      run: |
+        yarn
+        yarn start
+        TCGDEX_COMPILER_LANG=fr yarn start
+        TCGDEX_COMPILER_LANG=es yarn start
+        TCGDEX_COMPILER_LANG=it yarn start
+        TCGDEX_COMPILER_LANG=pt yarn start
+        TCGDEX_COMPILER_LANG=de yarn start
 
     - name: Commit Changes
       id: commit
