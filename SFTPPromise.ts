@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 import { ConnectConfig, Client, SFTPWrapper } from 'ssh2'
 import { Stats, InputAttributes } from 'ssh2-streams'
 import { promises as fs } from 'fs'
@@ -26,7 +27,7 @@ export default class SFTPPromise {
 	public constructor(public config: ConnectConfig) {}
 
 	public connect(): Promise<void> {
-		return new Promise<void>((res, rej) => {
+		return new Promise<void>((res) => {
 			this.conn.on('ready', () => {
 				this.conn.sftp((err, sftpLocal) => {
 					this.sftp = sftpLocal
@@ -154,7 +155,7 @@ export default class SFTPPromise {
 		return res
 	}
 
-	public async uploadDir(localPath: string, remotePath: string, exclude?: RegExp, root = true) {
+	public async uploadDir(localPath: string, remotePath: string, exclude?: RegExp, root = true): Promise<void> {
 		if (root) {
 			this.filesToUpload = 0
 			this.filesUploaded = 0
@@ -165,7 +166,7 @@ export default class SFTPPromise {
 		logger.log('Running !')
 		this.filesToUpload += files.length
 		this.queue.start()
-		for (const file of files) {
+		for await (const file of files) {
 			// console.log('t1')
 			if (exclude?.test(file)) {
 				continue
@@ -182,7 +183,7 @@ export default class SFTPPromise {
 						this.lastTimeDiff.push(new Date().getTime() - now)
 						this.lastTimeDiff.shift()
 						const time = (this.filesToUpload - this.filesUploaded) * (this.lastTimeDiff.reduce((p, c) => p + c, 0) / this.lastTimeDiff.length) / 10000
-						console.log(`Files uploaded ${(this.filesUploaded * 100 / this.filesToUpload).toFixed(0)}% ${time > 60 ? `${(time/60).toFixed(0)}m` : `${time.toFixed(0)}s`} ${this.filesUploaded}/${this.filesToUpload}`)
+						console.log(`Files uploaded ${(this.filesUploaded * 100 / this.filesToUpload).toFixed(0)}% ${time > 60 ? `${(time / 60).toFixed(0)}m` : `${time.toFixed(0)}s`} ${this.filesUploaded}/${this.filesToUpload}`)
 					})
 					.catch((err) => logger.log(err, 'Error uploading', filePath, 'to', remoteFilePath))
 			)
@@ -200,6 +201,7 @@ export default class SFTPPromise {
 		return this.sftp
 	}
 
+	// eslint-disable-next-line id-length
 	private l(...messages: Array<any>) {
 		if (this.debug) {
 			logger.log(...messages)
