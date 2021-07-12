@@ -10,7 +10,7 @@ interface t {
 const setCache: t = {}
 
 export function isSetAvailable(set: Set, lang: SupportedLanguages): boolean {
-	return lang in set.name
+	return lang in set.name && lang in set.serie.name
 }
 
 /**
